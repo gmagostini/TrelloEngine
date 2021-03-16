@@ -3,6 +3,9 @@ import json
 
 
 class Base(object):
+    """
+    i valori boolean vanno coverti in string, la maiuscola di True e False danno problemi e ritornano valore non valido
+    """
 
     def __init__(self, app_key: str, token: str, id:str = None):
         super(Base, self).__init__()
@@ -11,6 +14,7 @@ class Base(object):
         self.id = id
         self.id = None
         self.request_url = f"https://api.trello.com/1"
+
 
 
 
@@ -29,7 +33,7 @@ class Base(object):
             print(response.headers['Content-Type'])
             return response.json()
         else:
-            return False
+            return {"response": response, "text": response.text}
 
     def put_request(self, url, query):
 
@@ -45,7 +49,7 @@ class Base(object):
             print(response.headers['Content-Type'])
             return response.json()
         else:
-            return False
+            return response.text
 
 
     def post_request(self, url, query):
@@ -62,7 +66,7 @@ class Base(object):
             print(response.headers['Content-Type'])
             return response.json()
         else:
-            return False
+            return response
 
 
     def delete_request(self, url, query):
@@ -79,4 +83,4 @@ class Base(object):
             print(response.headers['Content-Type'])
             return response.json()
         else:
-            return False
+            return response
