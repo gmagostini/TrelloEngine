@@ -9,14 +9,14 @@ class Board(Base):
 
     def get_membership(self, id: str = None, filter: str = 'all', org_member_type: bool = False, member: bool = False, member_field: str = None):
         """
-        ottieni il member proprietario della board \n
-        problemi: member
-        :param id: id della board
-        :param filter: filtro per la board valori [admins, all, none, normal]
-        :param org_member_type: mostra lo status del member nel organizzaione
-        :param member: deternuba se allagare l'oggeto member
-        :param member_field: se member=True seleziona i field da allegare
-        :return:ritorna un dizzionario contentente il mbember
+        Get information about the memberships users have to the board.\n
+        future: add activity as optional
+        :param id: The ID of the board
+        :param filter: the filter applied [admins, all, none, normal]
+        :param org_member_type: Shows the type of member to the org the user is. For instance, an org admin will have a orgMemberType of admin.
+        :param member: Determines whether to include a nested member object.
+        :param member_field: Fields to show if member=true.
+        :return: members list
         """
 
         member = 'true' if member else 'false'
@@ -36,11 +36,36 @@ class Board(Base):
             'member_fields': member_field
         }
 
-        return super(Board, self).get_request(url_temp, query)
+        return super(Board, self).get_request(url=url_temp,query=query)
 
     def get_board(self, id: str = None, actions: str = 'all', board_stars: str = None,cards: str = None, card_plugin_data: bool = False, checklists: str = None, custom_fields: bool = False,
                   fields: str = "name,desc,descData,closed,idOrganization,pinned,url,shortUrl,prefs,labelNames", labels: str = None, lists: str = 'open', members: str = None,
-                  memberships: str = None, plugin_data: bool = False, organization: str = False, organization_plugin_data:bool = False, my_prefs:bool = False, tags: bool = False):
+                  memberships: str = None, plugin_data: bool = False, organization: bool = False, organization_plugin_data:bool = False, my_prefs:bool = False, tags: bool = False):
+        """
+        Request a single board.\n
+        * Read more about actions as nested resources https://developer.atlassian.com/cloud/trello/guides/rest-api/nested-resources/\n
+        :param id: The ID of the board
+        :param actions: Nested resource.*
+        :param board_stars: [i have no idea. Documentation: string Valid values are one of: mine or none. Default: none]
+        :param cards: Nested resource.*
+        :param card_plugin_data: Use with the cards param to include card pluginData with the response
+        :param checklists: Nested resource.*
+        :param custom_fields: Nested resource.*
+        :param fields: The fields of the board to be included in the response.  all or [closed, dateLastActivity,
+        dateLastView, desc, descData, idMemberCreator, idOrganization, invitations, invited, labelNames,
+        memberships, name, pinned, powerUps, prefs, shortLink, shortUrl, starred, subscribed, url]
+        :param labels: Nested resource.*
+        :param lists: Nested resource.*
+        :param members: Nested resource.*
+        :param memberships: Nested resource.*
+        :param plugin_data: Determines whether the pluginData for this board should be returned.
+        :param organization: Nested resource.*
+        :param organization_plugin_data: Use with the organization param to include organization pluginData with the response
+        :param my_prefs: i have no idea. add prefs objects maeby?
+        :param tags: return the tags (aka collection) to which the board belongs
+        :return: dictionary of the requested meber object
+        """
+
         if id == None:
             url_temp = self.request_url + f"/{self.id}"
         else:
@@ -49,6 +74,7 @@ class Board(Base):
         card_plugin_data = 'true' if card_plugin_data else 'false'
         custom_fields = 'true' if custom_fields else 'false'
         plugin_data = 'true' if plugin_data else 'false'
+        organization = 'true' if organization else 'false'
         organization_plugin_data = 'true' if organization_plugin_data else 'false'
         my_prefs = 'true' if my_prefs else 'false'
         tags = 'true' if tags else 'false'
@@ -74,12 +100,35 @@ class Board(Base):
             'tags': tags
         }
 
-        return super(Board, self).get_request(url_temp, query)
+        return super(Board, self).get_request(url=url_temp,query=query)
 
-    def update_board(self, id=None, **kwargs):
+    def update_board(self, parameters: dict, id=None):
         """
-        aggiorna la tabella seondo i paramteri passsati in kwarg \n
-        :param id:
+        Update board \n
+        all arguments that are intended to be changed have passed through kwargs\n
+        **name**: The new name for the board. 1 to 16384 characters long.\n
+        **desc: A new description for the board, 0 to 16384 characters long\n
+        **closed**: Whether the board is closed\n
+        **subscribed**: Whether the acting user is subscribed to the board\n
+        **idOrganization**: The id of the team the board should be moved to\n
+        **prefs/permissionLevel**: permission write read. One of: org, private, public\n
+        **prefs/selfJoin**: Whether team members can join the board themselves\n
+        **prefs/cardCovers**: Whether card covers should be displayed on this board\n
+        **prefs/hideVotes**: Determines whether the Voting Power-Up should hide who voted on cards or not.\n
+        **prefs/invitations**: Who can invite people to this board. One of: admins, members\n
+        **prefs/voting**: Who can vote on this board. One of disabled, members, observers, org, public\n
+        **prefs/comments**: Who can comment on cards on this board. One of: disabled, members, observers, org, public\n
+        **prefs/background**: The id of a custom background or one of: blue, orange, green, red, purple, pink, lime, sky, grey\n
+        **prefs/cardAging**: [no clue] One of: pirate, regular\n
+        **prefs/calendarFeedEnabled**: Determines whether the calendar feed is enabled or not.\n
+        **labelNames/green**: Name for the green label. 1 to 16384 characters long\n
+        **labelNames/yellow**: Name for the green label. 1 to 16384 characters long\n
+        **labelNames/orange**: Name for the green label. 1 to 16384 characters long\n
+        **labelNames/red**: Name for the green label. 1 to 16384 characters long\n
+        **labelNames/purple**: Name for the green label. 1 to 16384 characters long\n
+        **labelNames/blue**: Name for the green label. 1 to 16384 characters long\n
+        **labelNames change the first label of the indicated color on the list\n
+        :param id: The ID of the board
         :param kwargs: name desc descData closed idOrganization idEnterprise pinned url shortUrl prefs labelNames
         :return: None
         """
@@ -91,15 +140,15 @@ class Board(Base):
         query = {
             'key': self.app_key,
             'token': self.token,
-            **kwargs
+            **parameters
         }
 
-        return super(Board, self).put_request(url_temp, query)
+        return super(Board, self).put_request(url=url_temp,query=query)
 
     def delete_board(self, id=None):
         """
-        cancella la board definitivamente
-        :param id: l'id della board
+        Delete a board.\n
+        :param id: The ID of the board
         :return: dizzionario vuoto se tutto va bene
         """
         if id == None:
@@ -112,13 +161,15 @@ class Board(Base):
             'token': self.token
         }
 
-        return super(Board, self).delete_request(url_temp, query)
+        return super(Board, self).delete_request(url=url_temp,query=query)
 
     def get_field(self, field: str, id:str = None):
         """
-        richiedri specifico field
+        Get a single, specific field on a board.\n
         :param field: il filed da visionare [closed, dateLastActivity, dateLastView, desc, descData, idMemberCreator,
-            idOrganization, invitations, invited, labelNames, memberships, name, pinned, powerUps, prefs, shortLink, shortUrl, starred, subscribed, url]
+            idOrganization, invitations, invited, labelNames, memberships, name, pinned, powerUps, prefs, shortLink,
+            shortUrl, starred, subscribed, url]
+        :param id: The ID of the board
         :return: il filed???
         """
 
@@ -132,13 +183,14 @@ class Board(Base):
             'token': self.token
         }
 
-        return super(Board, self).get_request(url_temp, query)
+        return super(Board, self).get_request(url=url_temp,query=query)
 
     def get_actions(self, id:str = None, filter: str = None):
         """
         ottieni la lista delle actions
-        :param id: id  della board
-        :param filter: a comma separeted list of action (https://developer.atlassian.com/cloud/trello/guides/rest-api/action-types/)
+        :param id: The ID of the board
+        :param filter: a comma separeted list of action
+            (https://developer.atlassian.com/cloud/trello/guides/rest-api/action-types/)
         :return:
         """
 
@@ -153,9 +205,15 @@ class Board(Base):
             'filter': filter
         }
 
-        return super(Board, self).get_request(url_temp, query)
+        return super(Board, self).get_request(url=url_temp,query=query)
 
     def get_a_card(self, id_card: str, id: str = None):
+        """
+        Get a single Card on a Board.\n
+        :param id_card: The id the card to retrieve.
+        :param id: The ID of the board
+        :return: card dict
+        """
 
         if id == None:
             url_temp = self.request_url + f"/{self.id}/cards/{id_card}"
@@ -170,6 +228,11 @@ class Board(Base):
         return super(Board, self).get_request(url_temp,query)
 
     def get_board_stars(self, id: str = None):
+        """
+        Get all elements with star. maybe.
+        :param id: The ID of the board
+        :return: star list
+        """
 
         if id == None:
             url_temp = self.request_url + f"/{self.id}/boardStars"
@@ -181,10 +244,15 @@ class Board(Base):
             'token': self.token
         }
 
-        return super(Board, self).get_request(url_temp, query)
+        return super(Board, self).get_request(url=url_temp,query=query)
 
 
     def get_checklists(self, id=None):
+        """
+        Get all of the checklists on a Board.
+        :param id: The ID of the board
+        :return: checklist list
+        """
 
         if id == None:
             url_temp = self.request_url + f"/{self.id}/checklists"
@@ -196,9 +264,38 @@ class Board(Base):
             'token': self.token
         }
 
-        return super(Board, self).get_request(url_temp, query)
+        return super(Board, self).get_request(url=url_temp,query=query)
+
+    def create_checklist(self, name: str, id: str = None):
+        """
+        Create a new checklist on a board.
+        DOSN'T WORK
+        {'response': <Response [400]>, 'text': 'invalid value for idCard'}
+        I have no idea how this is supposed to work
+        :param name: The name of the checklist to be created. 1 to 16384 characters long.
+        :param id: The ID of the board
+        :return: checklist dict
+        """
+
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/checklists"
+        else:
+            url_temp = self.request_url + f"/{id}/checklists"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'name': name
+        }
+
+        return super(Board, self).post_request(url=url_temp,query=query)
 
     def get_cards(self, id=None):
+        """
+        Get all of the open Cards on a Board.
+        :param id: The ID of the board
+        :return: cards list
+        """
 
         if id == None:
             url_temp = self.request_url + f"/{self.id}/cards"
@@ -210,12 +307,34 @@ class Board(Base):
             'token': self.token
         }
 
-        return super(Board, self).get_request(url_temp, query)
+        return super(Board, self).get_request(url=url_temp,query=query)
 
-    def get_filtered_card(self):
-        pass
+    def get_filtered_card(self, filter: str, id: str = None):
+        """
+         Get the Cards on a Board that match a given filter.
+        :param filter: the filter applied [all, closed, none, open, visible]
+        :param id: The ID of the board
+        :return: cards list
+        """
+
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/cards/{filter}"
+        else:
+            url_temp = self.request_url + f"/{id}/cards/{filter}"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token
+        }
+
+        return super(Board, self).get_request(url=url_temp,query=query)
 
     def get_custom_fields(self, id=None):
+        """
+        Get the Custom Field Definitions that exist on a board.
+        :param id: The ID of the board
+        :return: la lista dei costumFileds
+        """
 
         if id == None:
             url_temp = self.request_url + f"/{self.id}/customFields"
@@ -227,10 +346,15 @@ class Board(Base):
             'token': self.token
         }
 
-        return super(Board, self).get_request(url_temp, query)
+        return super(Board, self).get_request(url=url_temp,query=query)
 
 
     def get_labels(self, id=None):
+        """
+        Get all of the Labels on a Board.
+        :param id: The ID of the board
+        :return: lista delle labels
+        """
 
         if id == None:
             url_temp = self.request_url + f"/{self.id}/labels"
@@ -239,16 +363,41 @@ class Board(Base):
 
         query = {
             'key': self.app_key,
-            'token': self.token
+            'token': self.token,
+            'fileds': 'id,name'
         }
 
-        return super(Board, self).get_request(url_temp, query)
+        return super(Board, self).get_request(url=url_temp,query=query)
 
-    def create_label(self):
-        pass
+    def create_label(self, name: str, color: str, id: str = None):
+        """
+        create list
+        :param name: nome della list
+        :param color: colore
+        :param id: The ID of the board
+        :return: label dict
+        """
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/labels"
+        else:
+            url_temp = self.request_url + f"/{id}/labels"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'name': name,
+            'color': color
+        }
+
+        return super(Board, self).post_request(url=url_temp,query=query)
 
 
-    def get_lists(self, id=None):
+    def get_lists(self, id: str = None):
+        """
+        Get the Lists on a Board
+        :param id: The ID of the board
+        :return: lists list
+        """
 
         if id == None:
             url_temp = self.request_url + f"/{self.id}/lists"
@@ -260,94 +409,506 @@ class Board(Base):
             'token': self.token
         }
 
-        return super(Board, self).get_request(url_temp, query)
+        return super(Board, self).get_request(url=url_temp,query=query)
 
-    def create_list(self):
-        pass
-
-    def get_filtered_card(self):
-        pass
-
-    def get_members(self):
-        pass
-
-    def invite_member(self):
-        pass
-
-    def add_member(self):
-        pass
-
-    def remove_member(self):
-        pass
-
-    def update_member_status(self):
-        pass
-
-    def update_email_position(self):
-        pass
-
-    def update_id_email_list(self):
-        pass
-
-    def update_show_list_guide_pref(self):
-        pass
-
-    def update_show_sidebar_pref(self):
-        pass
-
-    def update_show_sidebarr_activity_pref(self):
-        pass
-
-    def update_show_sidebarr_board_actions_pref(self):
-        pass
-
-    def update_show_sidebarr_member_pref(self):
-        pass
-
-    def creata_board(self, name, **kwargs):
+    def create_list(self, name: str, id: str = None, pos: str = "top"):
         """
-        :param kwargs: name desc descData closed idOrganization idEnterprise pinned url shortUrl prefs labelNames
-        :return: None
+        Create a new List on a Board.
+        :param name: nome della list
+        :param color: colore
+        :param id: The ID of the board
+        :param pos: Determines the position of the list. Valid values: top, bottom, or a positive number.
+        :return: list dict
         """
+
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/lists"
+        else:
+            url_temp = self.request_url + f"/{id}/lists"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'name': name,
+            'pos': pos
+        }
+
+        return super(Board, self).post_request(url=url_temp,query=query)
+
+
+    def get_filtered_list(self, filter: str, id: str = None):
+        """
+        Get the List on a Board that match a given filter.
+        :param filter: the filter applied [all, closed, none, open]
+        :param id: The ID of the board
+        :return: lists list
+        """
+
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/lists"
+        else:
+            url_temp = self.request_url + f"/{id}/lists"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'filter': filter
+        }
+
+        return super(Board, self).get_request(url=url_temp,query=query)
+
+
+    def get_members(self, id: str = None):
+        """
+        ottieni i member apperteneti alla board
+        :param id: The ID of the board
+        :return: la lista dei member
+        """
+
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/members"
+        else:
+            url_temp = self.request_url + f"/{id}/members"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token
+        }
+
+        return super(Board, self).get_request(url=url_temp,query=query)
+
+    def invite_member(self,email:str, id: str = None, type_member: str = "normal", full_name: str = None):
+        """
+        Get the Members for a board
+        :param email: The email address of a user to add as a member of the board.
+        :param id: The ID of the board
+        :param type_member: Valid values: admin, normal, observer. Determines what type of member the user being added should be of the board.
+        :param full_name: The full name of the user to as a member of the board. Must have a length of at least 1 and cannot begin nor end with a space.
+        :return:
+        """
+
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/members"
+        else:
+            url_temp = self.request_url + f"/{id}/members"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'email': email,
+            'type': type_member,
+            'fullName': full_name
+        }
+
+        return super(Board, self).put_request(url=url_temp,query=query)
+
+    def add_member(self,id_member: str, type_member:str, id: str = None, allow_billable_guest: bool = False):
+        """
+        Add a member to the board.
+        :param id_member: The id of the member to add to the board.
+        :param type_member: One of: admin, normal, observer. Determines the type of member this user will be on the board.
+        :param id: The id of the board to update
+        :param allow_billable_guest: Optional param that allows organization admins to add multi-board guests onto a board.
+        :return: dict
+        """
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/members/{id_member}"
+        else:
+            url_temp = self.request_url + f"/{id}/members/{id_member}"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'type': type_member,
+            'allowBillableGuest': allow_billable_guest
+        }
+        
+        return super(Board, self).put_request(url=url_temp,query=query)
+
+    def remove_member(self,id_member: str, id: str = None) -> dict:
+        """
+        Remove a member to the board.
+        :param id_member: The id of the member to add to the board.
+        :param id: The id of the board to update
+        :return: dict
+        """
+
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/members/{id_member}"
+        else:
+            url_temp = self.request_url + f"/{id}/members/{id_member}"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Board, self).delete_request(url=url_temp, query=query)
+
+    def change_membership(self, id_membership: str, type_member: str, id: str = None, member_fields: str = 'fullName, username'):
+        """
+
+        :param id_membership:
+        :param type_member:
+        :param id:
+        :param member_fields:
+        :return:
+        """
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/members/{id_membership}"
+        else:
+            url_temp = self.request_url + f"/{id}/members/{id_membership}"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'type': type_member,
+            'member_fields ': member_fields
+        }
+
+        return super(Board, self).put_request(url=url_temp,query=query)
+
+    def update_email_position(self, value:str, id: str = None):
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/myPrefs/emailPosition"
+        else:
+            url_temp = self.request_url + f"/{id}/myPrefs/emailPosition"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'value': value
+        }
+
+        return super(Board, self).put_request(url=url_temp, query=query)
+
+    def update_id_email_list(self, value:str, id: str = None):
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/myPrefs/idEmailList"
+        else:
+            url_temp = self.request_url + f"/{id}/myPrefs/idEmailList"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'value': value
+        }
+
+        return super(Board, self).put_request(url=url_temp, query=query)
+
+    def update_show_list_guide_pref(self, value:str, id: str = None):
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/myPrefs/showListGuide"
+        else:
+            url_temp = self.request_url + f"/{id}/myPrefs/showListGuide"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'value': value
+        }
+
+        return super(Board, self).put_request(url=url_temp, query=query)
+
+    def update_show_sidebar_pref(self, value:str, id: str = None):
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/myPrefs/showSidebar"
+        else:
+            url_temp = self.request_url + f"/{id}/myPrefs/showSidebar"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'value': value
+        }
+
+        return super(Board, self).put_request(url=url_temp, query=query)
+
+    def update_show_sidebarr_activity_pref(self, value:str, id: str = None):
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/myPrefs/showSidebarActivity"
+        else:
+            url_temp = self.request_url + f"/{id}/myPrefs/showSidebarActivity"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'value': value
+        }
+
+        return super(Board, self).put_request(url=url_temp, query=query)
+
+    def update_show_sidebarr_board_actions_pref(self, value:str, id: str = None):
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/myPrefs/showSidebarBoardActions"
+        else:
+            url_temp = self.request_url + f"/{id}/myPrefs/showSidebarBoardActions"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'value': value
+        }
+
+        return super(Board, self).put_request(url=url_temp, query=query)
+
+    def update_show_sidebarr_member_pref(self, value:str, id: str = None):
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/myPrefs/showSidebarMembers"
+        else:
+            url_temp = self.request_url + f"/{id}/myPrefs/showSidebarMembers"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'value': value
+        }
+
+        return super(Board, self).put_request(url=url_temp, query=query)
+
+    def creata_board(self, name, default_labels: bool = True, default_lists: bool = True, desc: str = None, id_organization: str = None,
+                     id_boardSource: str = None, keepFromSource: str = None, power_ups: str = None, prefs_permission_level:str = "private",
+                     prefs_voting: str = "Default", prefs_comments: str = "members", prefs_invitations: str = "members", prefs_self_join: bool = True,
+                     prefs_card_covers:bool = True, prefs_background: str = "blue", prefs_card_aging: str =  "regular"):
+        """
+        Create a new board.
+        :param name:The new name for the board. 1 to 16384 characters long.
+        :param default_labels: Determines whether to use the default set of labels.
+        :param default_lists: Determines whether to add the default set of lists to a board (To Do, Doing, Done). It is ignored if idBoardSource is provided.
+        :param desc: A new description for the board, 0 to 16384 characters long
+        :param id_organization: The id or name of the team the board should belong to.
+        :param id_boardSource: The id of a board to copy into the new board.
+        :param keepFromSource: To keep cards from the original board pass in the value cards
+        :param power_ups: The Power-Ups that should be enabled on the new board. One of: all, calendar, cardAging, recap, voting.
+        :param prefs_permission_level: The permissions level of the board. One of: org, private, public.
+        :param prefs_voting: Who can vote on this board. One of disabled, members, observers, org, public.
+        :param prefs_comments: Who can comment on cards on this board. One of: disabled, members, observers, org, public.
+        :param prefs_invitations: Determines what types of members can invite users to join. One of: admins, members.
+        :param prefs_self_join: Determines whether users can join the boards themselves or whether they have to be invited.
+        :param prefs_card_covers: Determines whether card covers are enabled.
+        :param prefs_background: The id of a custom background or one of: blue, orange, green, red, purple, pink, lime, sky, grey.
+        :param prefs_card_aging: Determines the type of card aging that should take place on the board if card aging is enabled. One of: pirate, regular.
+        :return:
+        """
+
+        default_labels = 'true' if default_labels else 'false'
+        default_lists = 'true' if default_lists else 'false'
+        prefs_card_covers = 'true' if prefs_card_covers else 'false'
+        prefs_self_join = 'true' if prefs_self_join else 'false'
+
         url_temp = self.request_url
 
         query = {
             'key': self.app_key,
             'token': self.token,
             'name': name,
-            **kwargs
+            'defaultLabels': default_labels,
+            'defaultLists': default_lists,
+            'desc': desc,
+            'idOrganization': id_organization,
+            'idBoardSource': id_boardSource,
+            'keepFromSource': keepFromSource,
+            'powerUps': power_ups,
+            'prefs_permissionLevel': prefs_permission_level,
+            'prefs_voting': prefs_voting,
+            'prefs_comments': prefs_comments,
+            'prefs_invitations': prefs_invitations,
+            'prefs_selfJoin': prefs_self_join,
+            'prefs_cardCovers': prefs_card_covers,
+            'prefs_background': prefs_background,
+            'prefs_cardAging': prefs_card_aging
+
         }
 
-        return super(Board, self).post_request(url_temp, query)
+        return super(Board, self).post_request(url=url_temp,query=query)
 
-    def create_calender_key(self):
-        pass
+    def create_calender_key(self, id: str = None):
+        """
+        I don know
+        :param id: The id of the board to update
+        :return:
+        """
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/calendarKey/generate"
+        else:
+            url_temp = self.request_url + f"/{id}/calendarKey/generate"
 
-    def create_email_key(self):
-        pass
+        query = {
+            'key': self.app_key,
+            'token': self.token
+        }
 
-    def create_tag(self):
-        pass
+        return super(Board, self).post_request(url=url_temp, query=query)
 
-    def mark_board_as_viewed(self):
-        pass
+    def create_email_key(self, id: str = None):
+        """
 
-    def enable_power_up(self):
-        pass
+        :param id: The id of the board to update
+        :return:
+        """
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/emailKey/generate"
+        else:
+            url_temp = self.request_url + f"/{id}/emailKey/generate"
 
-    def disable_power_up(self):
-        pass
+        query = {
+            'key': self.app_key,
+            'token': self.token
+        }
 
-    def get_enable_power_ups(self):
-        pass
+        return super(Board, self).post_request(url=url_temp, query=query)
 
-    def enable_a_power_up(self):
-        pass
+    def create_tag(self, value:str, id: str = None):
+        """
 
-    def disable_a_power_up(self):
-        pass
+        :param value: The id of a tag from the organization to which this board belongs.
+        :param id: The id of the board to update
+        :return:
+        """
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/idTags"
+        else:
+            url_temp = self.request_url + f"/{id}/idTags"
 
-    def get_power_ups(self):
-        pass
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'value': value
+        }
+
+        return super(Board, self).post_request(url=url_temp, query=query)
+
+    def mark_board_as_viewed(self, id: str = None):
+        """
+
+        :param id: The id of the board to update
+        :return:
+        """
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/markedAsViewed"
+        else:
+            url_temp = self.request_url + f"/{id}/markedAsViewed"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token
+        }
+
+        return super(Board, self).post_request(url=url_temp, query=query)
+
+    def enable_power_up(self, power_up:str, id: str = None):
+        """
+
+        :param value: The Power-Up to be enabled on the board. One of: calendar, cardAging, recap, voting.
+        :param id: The id of the board to update
+        :return:
+        """
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/powerUps"
+        else:
+            url_temp = self.request_url + f"/{id}/powerUps"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'value': power_up
+        }
+
+        return super(Board, self).post_request(url=url_temp, query=query)
+
+    def disable_power_up(self, power_up: str, id: str = None):
+        """
+
+        :param power_up: The Power-Up to be enabled on the board. One of: calendar, cardAging, recap, voting.
+        :param id: The id of the board to update
+        :return:
+        """
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/powerUps/{power_up}"
+        else:
+            url_temp = self.request_url + f"/{id}/powerUps/{power_up}"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Board, self).delete_request(url=url_temp, query=query)
+
+    def get_enable_power_ups(self, id: str = None):
+        """
+        Get the enabled Power-Ups on a board
+        :param id: The id of the board to update
+        :return:
+        """
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/boardPlugins"
+        else:
+            url_temp = self.request_url + f"/{id}/boardPlugins"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Board, self).get_request(url=url_temp, query=query)
+
+    def enable_a_power_up(self, id_plugin: str, id: str = None):
+        """
+        Enable a Power-Up on a Board
+        :param id: The id of the board to update
+        :param idPlugin: The ID of the Power-Up to enable
+        :return:
+        """
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/boardPlugins"
+        else:
+            url_temp = self.request_url + f"/{id}/boardPlugins"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'idPlugin':id_plugin
+        }
+
+        return super(Board, self).post_request(url=url_temp, query=query)
+
+    def disable_a_power_up(self,id_plugin: str, id: str = None):
+        """
+        Disable a Power-Up on a board
+        :param id: The ID of the board
+        :return:
+        """
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/boardPlugins/{id_plugin}"
+        else:
+            url_temp = self.request_url + f"/{id}/boardPlugins/{id_plugin}"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'idPlugin':id_plugin
+        }
+
+        return super(Board, self).delete_request(url=url_temp, query=query)
+
+    def get_power_ups(self, id: str = None, filter: str = None):
+        """
+        List the Power-Ups on a board
+        :param id: The ID of the board
+        :param filter: One of: enabled or available
+        :return:
+        """
+        if id == None:
+            url_temp = self.request_url + f"/{self.id}/plugins"
+        else:
+            url_temp = self.request_url + f"/{id}/plugins"
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Board, self).get_request(url=url_temp, query=query)
 
 

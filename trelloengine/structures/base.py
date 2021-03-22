@@ -49,7 +49,7 @@ class Base(object):
             print(response.headers['Content-Type'])
             return response.json()
         else:
-            return response.text
+            return {"response": response, "text": response.text}
 
 
     def post_request(self, url, query):
@@ -66,7 +66,7 @@ class Base(object):
             print(response.headers['Content-Type'])
             return response.json()
         else:
-            return response
+            return {"response": response, "text": response.text}
 
 
     def delete_request(self, url, query):
@@ -83,4 +83,4 @@ class Base(object):
             print(response.headers['Content-Type'])
             return response.json()
         else:
-            return response
+            return {"response": response, "text": response.text}
