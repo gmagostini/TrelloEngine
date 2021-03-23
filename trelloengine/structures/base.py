@@ -14,7 +14,17 @@ class Base(object):
         self.id = id
         self.base_url = f"https://api.trello.com/1"
 
-    def select_id(self, id: str, string: str = None):
+        self.response =None
+
+
+    def select_id(self, id: str, string: str = None) -> str:
+        """
+        Switch for id selection. If no id is passed as a parameter use the global one. If no id exists raise a ValueError.
+        Adds the last part of the url.
+        :param id: local id
+        :param string: last part of the url
+        :return: correct url
+        """
         if id is None and self.id is None:
             raise ValueError("id is not set correctly")
         elif id is None:
@@ -28,72 +38,92 @@ class Base(object):
         return url_temp
 
 
-    def bool_to_string(self,boolean:bool):
-        return 'true' if boolean else 'false'
+    def bool_to_string(self,query: dict()) -> dict:
+        """
+        Converts boolean values to string so that they can be passed correctly
+        :param query: query to be evaluated
+        :return: query
+        """
+        for key in query.keys():
+            if isinstance(query[key], bool):
+                query[key] = 'true' if query[key] else 'false'
 
-    def get_request(self, url, query, headers = {"Accept": "application/json"}):
+        return query
 
+    def get_request(self, url, query, headers = {"Accept": "application/json"}) -> json:
+        """
+        basic function for the get request
+        :param url:
+        :param query:
+        :param headers:
+        :return:
+        """
         response = requests.request(
             "GET",
             url,
             headers=headers,
-            params=query
+            params=self.bool_to_string(query)
         )
-        print(url)
+
         if response.__str__() == "<Response [200]>":
-            print(response)
-            print(response.encoding)
-            print(response.headers['Content-Type'])
             return response.json()
         else:
             return {"response": response, "text": response.text}
 
-    def put_request(self, url, query):
-
+    def put_request(self, url, query) -> json:
+        """
+        basic function for the put request
+        :param url:
+        :param query:
+        :return:
+        """
         response = requests.request(
             "PUT",
             url,
-            params=query
+            params=self.bool_to_string(query)
         )
-        print(url)
+
         if response.__str__() == "<Response [200]>":
-            print(response)
-            print(response.encoding)
-            print(response.headers['Content-Type'])
+
             return response.json()
         else:
             return {"response": response, "text": response.text}
 
 
-    def post_request(self, url, query):
-
+    def post_request(self, url, query) -> json:
+        """
+        basic function for the post request
+        :param url:
+        :param query:
+        :return:
+        """
         response = requests.request(
             "POST",
             url,
-            params=query
+            params=self.bool_to_string(query)
         )
-        print(url)
+
         if response.__str__() == "<Response [200]>":
-            print(response)
-            print(response.encoding)
-            print(response.headers['Content-Type'])
+
             return response.json()
         else:
             return {"response": response, "text": response.text}
 
 
-    def delete_request(self, url, query):
-
+    def delete_request(self, url, query) -> json:
+        """
+        basic function for the delete request
+        :param url:
+        :param query:
+        :return:
+        """
         response = requests.request(
             "DELETE",
             url,
-            params=query
+            params=self.bool_to_string(query)
         )
-        print(url)
+
         if response.__str__() == "<Response [200]>":
-            print(response)
-            print(response.encoding)
-            print(response.headers['Content-Type'])
             return response.json()
         else:
             return {"response": response, "text": response.text}

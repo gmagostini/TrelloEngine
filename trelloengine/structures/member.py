@@ -6,7 +6,7 @@ class Member(Base):
     def __init__(self, app_key: str, token: str,id=None):
         super(Member, self).__init__(app_key=app_key,token=token)
         self.id = id
-        self.request_url = self.request_url + f"/members"
+        self.request_url = self.base_url + f"/members"
 
     def get_boards (self, id=None):
 

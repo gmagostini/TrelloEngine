@@ -6,7 +6,8 @@ class Board(Base):
     def __init__(self, app_key: str, token: str,id=None):
         super(Board, self).__init__(app_key=app_key,token=token, id=id)
         self.base_url = self.base_url + "/boards"
-    
+
+
     
     
     
@@ -28,17 +29,17 @@ class Board(Base):
             'key': self.app_key,
             'token': self.token,
             'filter': filter,
-            'orgMemberType': self.bool_to_string(org_member_type),
-            'member': self.bool_to_string(member),
+            'orgMemberType':  org_member_type,
+            'member':  member,
             'member_fields': member_field
         }
 
-        return super(Board, self).get_request(url=url_rquest,query=query)
+        return super(Board, self).get_request(url=url_rquest,query=self.bool_to_string(query=query))
 
     
 
     def get_board(self, id: str = None, actions: str = 'all', board_stars: str = None,cards: str = None, card_plugin_data: bool = False, checklists: str = None, custom_fields: bool = False,
-                  fields: str = "name,desc,descData,closed,idOrganization,pinned,url,shortUrl,prefs,labelNames", labels: str = None, lists: str = 'open', members: str = None,
+                  fields: str = 'all', labels: str = None, lists: str = 'open', members: str = None,
                   memberships: str = None, plugin_data: bool = False, organization: bool = False, organization_plugin_data:bool = False, my_prefs:bool = False, tags: bool = False):
         """
         Request a single board.\n
@@ -74,24 +75,24 @@ class Board(Base):
             'actions': actions,
             'boardStars': board_stars,
             'cards': cards,
-            'card_pluginData':self.bool_to_string(card_plugin_data),
+            'card_pluginData': card_plugin_data,
             'checklists': checklists,
-            'customFields': self.bool_to_string(custom_fields),
+            'customFields':  custom_fields,
             'fields': fields,
             'labels': labels,
             'lists': lists,
             'members': members,
             'memberships': memberships,
-            'pluginData': self.bool_to_string(plugin_data),
-            'organization': self.bool_to_string(organization),
-            'organization_pluginData': self.bool_to_string(organization_plugin_data),
-            'myPrefs': self.bool_to_string(my_prefs),
-            'tags': self.bool_to_string(tags)
+            'pluginData':  plugin_data,
+            'organization':  organization,
+            'organization_pluginData':  organization_plugin_data,
+            'myPrefs':  my_prefs,
+            'tags':  tags
         }
 
-        return super(Board, self).get_request(url=url_rquest,query=query)
+        return super(Board, self).get_request(url=url_rquest,query=self.bool_to_string(query=query))
 
-    def update_board(self, parameters: dict, id=None):
+    def update_board(self, parameters: dict = {}, id=None):
         """
         Update board \n
         all arguments that are intended to be changed have passed through kwargs\n
@@ -451,10 +452,10 @@ class Board(Base):
             'key': self.app_key,
             'token': self.token,
             'type': type_member,
-            'allowBillableGuest': self.bool_to_string(allow_billable_guest)
+            'allowBillableGuest':  allow_billable_guest
         }
         
-        return super(Board, self).put_request(url=url_rquest,query=query)
+        return super(Board, self).put_request(url=url_rquest,query=self.bool_to_string(query=query))
 
     def remove_member(self,id_member: str, id: str = None) -> dict:
         """
@@ -572,9 +573,9 @@ class Board(Base):
 
         return super(Board, self).put_request(url=url_rquest, query=query)
 
-    def creata_board(self, name, default_labels: bool = True, default_lists: bool = True, desc: str = None, id_organization: str = None,
+    def create_board(self, name, default_labels: bool = True, default_lists: bool = True, desc: str = None, id_organization: str = None,
                      id_boardSource: str = None, keepFromSource: str = None, power_ups: str = None, prefs_permission_level:str = "private",
-                     prefs_voting: str = "Default", prefs_comments: str = "members", prefs_invitations: str = "members", prefs_self_join: bool = True,
+                     prefs_voting: str = "disabled", prefs_comments: str = "members", prefs_invitations: str = "members", prefs_self_join: bool = True,
                      prefs_card_covers:bool = True, prefs_background: str = "blue", prefs_card_aging: str =  "regular"):
         """
         Create a new board.
@@ -604,8 +605,8 @@ class Board(Base):
             'key': self.app_key,
             'token': self.token,
             'name': name,
-            'defaultLabels': self.bool_to_string(default_labels),
-            'defaultLists': self.bool_to_string(default_lists),
+            'defaultLabels':  default_labels,
+            'defaultLists':  default_lists,
             'desc': desc,
             'idOrganization': id_organization,
             'idBoardSource': id_boardSource,
@@ -615,14 +616,14 @@ class Board(Base):
             'prefs_voting': prefs_voting,
             'prefs_comments': prefs_comments,
             'prefs_invitations': prefs_invitations,
-            'prefs_selfJoin': self.bool_to_string(prefs_self_join),
-            'prefs_cardCovers': self.bool_to_string(prefs_card_covers),
+            'prefs_selfJoin':  prefs_self_join,
+            'prefs_cardCovers':  prefs_card_covers,
             'prefs_background': prefs_background,
             'prefs_cardAging': prefs_card_aging
 
         }
 
-        return super(Board, self).post_request(url=url_rquest,query=query)
+        return super(Board, self).post_request(url=url_rquest,query=self.bool_to_string(query=query))
 
     def create_calender_key(self, id: str = None):
         """
