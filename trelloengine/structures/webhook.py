@@ -1,5 +1,5 @@
 from .base import Base
 
 
-class Webhooks(Base):
+class Webhook(Base):
     pass

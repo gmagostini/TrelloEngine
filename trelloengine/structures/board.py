@@ -5,8 +5,11 @@ class Board(Base):
 
     def __init__(self, app_key: str, token: str,id=None):
         super(Board, self).__init__(app_key=app_key,token=token, id=id)
-        self.request_url = self.request_url + "/boards"
-
+        self.base_url = self.base_url + "/boards"
+    
+    
+    
+    
     def get_membership(self, id: str = None, filter: str = 'all', org_member_type: bool = False, member: bool = False, member_field: str = None):
         """
         Get information about the memberships users have to the board.\n
@@ -19,24 +22,20 @@ class Board(Base):
         :return: members list
         """
 
-        member = 'true' if member else 'false'
-        org_member_type = 'true' if org_member_type else 'false'
-
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/memberships"
-        else:
-            url_temp = self.request_url + f"/{id}/memberships"
+        url_rquest = self.select_id(id=id, string=f"/memberships")
 
         query = {
             'key': self.app_key,
             'token': self.token,
             'filter': filter,
-            'orgMemberType': org_member_type,
-            'member': member,
+            'orgMemberType': self.bool_to_string(org_member_type),
+            'member': self.bool_to_string(member),
             'member_fields': member_field
         }
 
-        return super(Board, self).get_request(url=url_temp,query=query)
+        return super(Board, self).get_request(url=url_rquest,query=query)
+
+    
 
     def get_board(self, id: str = None, actions: str = 'all', board_stars: str = None,cards: str = None, card_plugin_data: bool = False, checklists: str = None, custom_fields: bool = False,
                   fields: str = "name,desc,descData,closed,idOrganization,pinned,url,shortUrl,prefs,labelNames", labels: str = None, lists: str = 'open', members: str = None,
@@ -66,18 +65,8 @@ class Board(Base):
         :return: dictionary of the requested meber object
         """
 
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}"
-        else:
-            url_temp = self.request_url + f"/{id}"
+        url_rquest = self.select_id(id=id)
 
-        card_plugin_data = 'true' if card_plugin_data else 'false'
-        custom_fields = 'true' if custom_fields else 'false'
-        plugin_data = 'true' if plugin_data else 'false'
-        organization = 'true' if organization else 'false'
-        organization_plugin_data = 'true' if organization_plugin_data else 'false'
-        my_prefs = 'true' if my_prefs else 'false'
-        tags = 'true' if tags else 'false'
 
         query = {
             'key': self.app_key,
@@ -85,22 +74,22 @@ class Board(Base):
             'actions': actions,
             'boardStars': board_stars,
             'cards': cards,
-            'card_pluginData': card_plugin_data,
+            'card_pluginData':self.bool_to_string(card_plugin_data),
             'checklists': checklists,
-            'customFields': custom_fields,
+            'customFields': self.bool_to_string(custom_fields),
             'fields': fields,
             'labels': labels,
             'lists': lists,
             'members': members,
             'memberships': memberships,
-            'pluginData': plugin_data,
-            'organization': organization,
-            'organization_pluginData': organization_plugin_data,
-            'myPrefs': my_prefs,
-            'tags': tags
+            'pluginData': self.bool_to_string(plugin_data),
+            'organization': self.bool_to_string(organization),
+            'organization_pluginData': self.bool_to_string(organization_plugin_data),
+            'myPrefs': self.bool_to_string(my_prefs),
+            'tags': self.bool_to_string(tags)
         }
 
-        return super(Board, self).get_request(url=url_temp,query=query)
+        return super(Board, self).get_request(url=url_rquest,query=query)
 
     def update_board(self, parameters: dict, id=None):
         """
@@ -132,10 +121,7 @@ class Board(Base):
         :param kwargs: name desc descData closed idOrganization idEnterprise pinned url shortUrl prefs labelNames
         :return: None
         """
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}"
-        else:
-            url_temp = self.request_url + f"/{id}"
+        url_rquest = self.select_id(id=id)
 
         query = {
             'key': self.app_key,
@@ -143,7 +129,7 @@ class Board(Base):
             **parameters
         }
 
-        return super(Board, self).put_request(url=url_temp,query=query)
+        return super(Board, self).put_request(url=url_rquest,query=query)
 
     def delete_board(self, id=None):
         """
@@ -151,17 +137,14 @@ class Board(Base):
         :param id: The ID of the board
         :return: dizzionario vuoto se tutto va bene
         """
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}"
-        else:
-            url_temp = self.request_url + f"/{id}"
+        url_rquest = self.select_id(id=id)
 
         query = {
             'key': self.app_key,
             'token': self.token
         }
 
-        return super(Board, self).delete_request(url=url_temp,query=query)
+        return super(Board, self).delete_request(url=url_rquest,query=query)
 
     def get_field(self, field: str, id:str = None):
         """
@@ -173,17 +156,14 @@ class Board(Base):
         :return: il filed???
         """
 
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/{field}"
-        else:
-            url_temp = self.request_url + f"/{id}/{field}"
+        url_rquest = self.select_id(id=id, string=f"/{field}")
 
         query = {
             'key': self.app_key,
             'token': self.token
         }
 
-        return super(Board, self).get_request(url=url_temp,query=query)
+        return super(Board, self).get_request(url=url_rquest,query=query)
 
     def get_actions(self, id:str = None, filter: str = None):
         """
@@ -194,10 +174,7 @@ class Board(Base):
         :return:
         """
 
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/actions"
-        else:
-            url_temp = self.request_url + f"/{id}/actions"
+        url_rquest = self.select_id(id=id, string=f"/actions")
 
         query = {
             'key': self.app_key,
@@ -205,7 +182,7 @@ class Board(Base):
             'filter': filter
         }
 
-        return super(Board, self).get_request(url=url_temp,query=query)
+        return super(Board, self).get_request(url=url_rquest,query=query)
 
     def get_a_card(self, id_card: str, id: str = None):
         """
@@ -215,17 +192,14 @@ class Board(Base):
         :return: card dict
         """
 
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/cards/{id_card}"
-        else:
-            url_temp = self.request_url + f"/{id}/cards/{id_card}"
+        url_rquest = self.select_id(id=id, string=f"/cards/{id_card}")
 
         query = {
             'key': self.app_key,
             'token': self.token
         }
 
-        return super(Board, self).get_request(url_temp,query)
+        return super(Board, self).get_request(url_rquest,query)
 
     def get_board_stars(self, id: str = None):
         """
@@ -234,17 +208,14 @@ class Board(Base):
         :return: star list
         """
 
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/boardStars"
-        else:
-            url_temp = self.request_url + f"/{id}/boardStars"
+        url_rquest = self.select_id(id=id, string=f"/boardStars")
 
         query = {
             'key': self.app_key,
             'token': self.token
         }
 
-        return super(Board, self).get_request(url=url_temp,query=query)
+        return super(Board, self).get_request(url=url_rquest,query=query)
 
 
     def get_checklists(self, id=None):
@@ -254,17 +225,14 @@ class Board(Base):
         :return: checklist list
         """
 
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/checklists"
-        else:
-            url_temp = self.request_url + f"/{id}/checklists"
+        url_rquest = self.select_id(id=id, string=f"/checklists")
 
         query = {
             'key': self.app_key,
             'token': self.token
         }
 
-        return super(Board, self).get_request(url=url_temp,query=query)
+        return super(Board, self).get_request(url=url_rquest,query=query)
 
     def create_checklist(self, name: str, id: str = None):
         """
@@ -277,10 +245,7 @@ class Board(Base):
         :return: checklist dict
         """
 
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/checklists"
-        else:
-            url_temp = self.request_url + f"/{id}/checklists"
+        url_rquest = self.select_id(id=id, string=f"/checklists")
 
         query = {
             'key': self.app_key,
@@ -288,7 +253,7 @@ class Board(Base):
             'name': name
         }
 
-        return super(Board, self).post_request(url=url_temp,query=query)
+        return super(Board, self).post_request(url=url_rquest,query=query)
 
     def get_cards(self, id=None):
         """
@@ -296,18 +261,14 @@ class Board(Base):
         :param id: The ID of the board
         :return: cards list
         """
-
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/cards"
-        else:
-            url_temp = self.request_url + f"/{id}/cards"
+        url_rquest = self.select_id(id=id, string=f"/cards")
 
         query = {
             'key': self.app_key,
             'token': self.token
         }
 
-        return super(Board, self).get_request(url=url_temp,query=query)
+        return super(Board, self).get_request(url=url_rquest,query=query)
 
     def get_filtered_card(self, filter: str, id: str = None):
         """
@@ -317,17 +278,14 @@ class Board(Base):
         :return: cards list
         """
 
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/cards/{filter}"
-        else:
-            url_temp = self.request_url + f"/{id}/cards/{filter}"
+        url_rquest = self.select_id(id=id, string=f"/cards/{filter}")
 
         query = {
             'key': self.app_key,
             'token': self.token
         }
 
-        return super(Board, self).get_request(url=url_temp,query=query)
+        return super(Board, self).get_request(url=url_rquest,query=query)
 
     def get_custom_fields(self, id=None):
         """
@@ -336,17 +294,14 @@ class Board(Base):
         :return: la lista dei costumFileds
         """
 
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/customFields"
-        else:
-            url_temp = self.request_url + f"/{id}/customFields"
+        url_rquest = self.select_id(id=id, string=f"/customFields")
 
         query = {
             'key': self.app_key,
             'token': self.token
         }
 
-        return super(Board, self).get_request(url=url_temp,query=query)
+        return super(Board, self).get_request(url=url_rquest,query=query)
 
 
     def get_labels(self, id=None):
@@ -356,10 +311,7 @@ class Board(Base):
         :return: lista delle labels
         """
 
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/labels"
-        else:
-            url_temp = self.request_url + f"/{id}/labels"
+        url_rquest = self.select_id(id=id, string=f"/labels")
 
         query = {
             'key': self.app_key,
@@ -367,7 +319,7 @@ class Board(Base):
             'fileds': 'id,name'
         }
 
-        return super(Board, self).get_request(url=url_temp,query=query)
+        return super(Board, self).get_request(url=url_rquest,query=query)
 
     def create_label(self, name: str, color: str, id: str = None):
         """
@@ -377,10 +329,7 @@ class Board(Base):
         :param id: The ID of the board
         :return: label dict
         """
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/labels"
-        else:
-            url_temp = self.request_url + f"/{id}/labels"
+        url_rquest = self.select_id(id=id, string=f"/labels")
 
         query = {
             'key': self.app_key,
@@ -389,7 +338,7 @@ class Board(Base):
             'color': color
         }
 
-        return super(Board, self).post_request(url=url_temp,query=query)
+        return super(Board, self).post_request(url=url_rquest,query=query)
 
 
     def get_lists(self, id: str = None):
@@ -399,17 +348,14 @@ class Board(Base):
         :return: lists list
         """
 
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/lists"
-        else:
-            url_temp = self.request_url + f"/{id}/lists"
+        url_rquest = self.select_id(id=id, string=f"/lists")
 
         query = {
             'key': self.app_key,
             'token': self.token
         }
 
-        return super(Board, self).get_request(url=url_temp,query=query)
+        return super(Board, self).get_request(url=url_rquest,query=query)
 
     def create_list(self, name: str, id: str = None, pos: str = "top"):
         """
@@ -421,10 +367,7 @@ class Board(Base):
         :return: list dict
         """
 
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/lists"
-        else:
-            url_temp = self.request_url + f"/{id}/lists"
+        url_rquest = self.select_id(id=id, string=f"/lists")
 
         query = {
             'key': self.app_key,
@@ -433,7 +376,7 @@ class Board(Base):
             'pos': pos
         }
 
-        return super(Board, self).post_request(url=url_temp,query=query)
+        return super(Board, self).post_request(url=url_rquest,query=query)
 
 
     def get_filtered_list(self, filter: str, id: str = None):
@@ -444,10 +387,7 @@ class Board(Base):
         :return: lists list
         """
 
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/lists"
-        else:
-            url_temp = self.request_url + f"/{id}/lists"
+        url_rquest = self.select_id(id=id, string=f"/lists")
 
         query = {
             'key': self.app_key,
@@ -455,7 +395,7 @@ class Board(Base):
             'filter': filter
         }
 
-        return super(Board, self).get_request(url=url_temp,query=query)
+        return super(Board, self).get_request(url=url_rquest,query=query)
 
 
     def get_members(self, id: str = None):
@@ -465,17 +405,14 @@ class Board(Base):
         :return: la lista dei member
         """
 
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/members"
-        else:
-            url_temp = self.request_url + f"/{id}/members"
+        url_rquest = self.select_id(id=id, string=f"/members")
 
         query = {
             'key': self.app_key,
             'token': self.token
         }
 
-        return super(Board, self).get_request(url=url_temp,query=query)
+        return super(Board, self).get_request(url=url_rquest,query=query)
 
     def invite_member(self,email:str, id: str = None, type_member: str = "normal", full_name: str = None):
         """
@@ -487,10 +424,7 @@ class Board(Base):
         :return:
         """
 
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/members"
-        else:
-            url_temp = self.request_url + f"/{id}/members"
+        url_rquest = self.select_id(id=id, string=f"/members")
 
         query = {
             'key': self.app_key,
@@ -500,7 +434,7 @@ class Board(Base):
             'fullName': full_name
         }
 
-        return super(Board, self).put_request(url=url_temp,query=query)
+        return super(Board, self).put_request(url=url_rquest,query=query)
 
     def add_member(self,id_member: str, type_member:str, id: str = None, allow_billable_guest: bool = False):
         """
@@ -511,19 +445,16 @@ class Board(Base):
         :param allow_billable_guest: Optional param that allows organization admins to add multi-board guests onto a board.
         :return: dict
         """
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/members/{id_member}"
-        else:
-            url_temp = self.request_url + f"/{id}/members/{id_member}"
+        url_rquest = self.select_id(id=id, string=f"/members/{id_member}")
 
         query = {
             'key': self.app_key,
             'token': self.token,
             'type': type_member,
-            'allowBillableGuest': allow_billable_guest
+            'allowBillableGuest': self.bool_to_string(allow_billable_guest)
         }
         
-        return super(Board, self).put_request(url=url_temp,query=query)
+        return super(Board, self).put_request(url=url_rquest,query=query)
 
     def remove_member(self,id_member: str, id: str = None) -> dict:
         """
@@ -533,17 +464,14 @@ class Board(Base):
         :return: dict
         """
 
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/members/{id_member}"
-        else:
-            url_temp = self.request_url + f"/{id}/members/{id_member}"
+        url_rquest = self.select_id(id=id, string=f"/members/{id_member}")
 
         query = {
             'key': self.app_key,
             'token': self.token,
         }
 
-        return super(Board, self).delete_request(url=url_temp, query=query)
+        return super(Board, self).delete_request(url=url_rquest, query=query)
 
     def change_membership(self, id_membership: str, type_member: str, id: str = None, member_fields: str = 'fullName, username'):
         """
@@ -554,10 +482,8 @@ class Board(Base):
         :param member_fields:
         :return:
         """
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/members/{id_membership}"
-        else:
-            url_temp = self.request_url + f"/{id}/members/{id_membership}"
+        url_rquest = self.select_id(id=id, string=f"/members/{id_membership}")
+
 
         query = {
             'key': self.app_key,
@@ -566,13 +492,10 @@ class Board(Base):
             'member_fields ': member_fields
         }
 
-        return super(Board, self).put_request(url=url_temp,query=query)
+        return super(Board, self).put_request(url=url_rquest,query=query)
 
     def update_email_position(self, value:str, id: str = None):
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/myPrefs/emailPosition"
-        else:
-            url_temp = self.request_url + f"/{id}/myPrefs/emailPosition"
+        url_rquest = self.select_id(id=id, string=f"/myPrefs/emailPosition")
 
         query = {
             'key': self.app_key,
@@ -580,13 +503,11 @@ class Board(Base):
             'value': value
         }
 
-        return super(Board, self).put_request(url=url_temp, query=query)
+        return super(Board, self).put_request(url=url_rquest, query=query)
 
     def update_id_email_list(self, value:str, id: str = None):
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/myPrefs/idEmailList"
-        else:
-            url_temp = self.request_url + f"/{id}/myPrefs/idEmailList"
+        url_rquest = self.select_id(id=id, string=f"/myPrefs/idEmailList")
+
 
         query = {
             'key': self.app_key,
@@ -594,13 +515,10 @@ class Board(Base):
             'value': value
         }
 
-        return super(Board, self).put_request(url=url_temp, query=query)
+        return super(Board, self).put_request(url=url_rquest, query=query)
 
     def update_show_list_guide_pref(self, value:str, id: str = None):
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/myPrefs/showListGuide"
-        else:
-            url_temp = self.request_url + f"/{id}/myPrefs/showListGuide"
+        url_rquest = self.select_id(id=id, string=f"/myPrefs/showListGuide")
 
         query = {
             'key': self.app_key,
@@ -608,13 +526,10 @@ class Board(Base):
             'value': value
         }
 
-        return super(Board, self).put_request(url=url_temp, query=query)
+        return super(Board, self).put_request(url=url_rquest, query=query)
 
     def update_show_sidebar_pref(self, value:str, id: str = None):
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/myPrefs/showSidebar"
-        else:
-            url_temp = self.request_url + f"/{id}/myPrefs/showSidebar"
+        url_rquest = self.select_id(id=id, string=f"/myPrefs/showSidebar")
 
         query = {
             'key': self.app_key,
@@ -622,13 +537,10 @@ class Board(Base):
             'value': value
         }
 
-        return super(Board, self).put_request(url=url_temp, query=query)
+        return super(Board, self).put_request(url=url_rquest, query=query)
 
     def update_show_sidebarr_activity_pref(self, value:str, id: str = None):
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/myPrefs/showSidebarActivity"
-        else:
-            url_temp = self.request_url + f"/{id}/myPrefs/showSidebarActivity"
+        url_rquest = self.select_id(id=id, string=f"/myPrefs/showSidebarActivity")
 
         query = {
             'key': self.app_key,
@@ -636,13 +548,10 @@ class Board(Base):
             'value': value
         }
 
-        return super(Board, self).put_request(url=url_temp, query=query)
+        return super(Board, self).put_request(url=url_rquest, query=query)
 
     def update_show_sidebarr_board_actions_pref(self, value:str, id: str = None):
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/myPrefs/showSidebarBoardActions"
-        else:
-            url_temp = self.request_url + f"/{id}/myPrefs/showSidebarBoardActions"
+        url_rquest = self.select_id(id=id, string=f"/myPrefs/showSidebarBoardActions")
 
         query = {
             'key': self.app_key,
@@ -650,13 +559,10 @@ class Board(Base):
             'value': value
         }
 
-        return super(Board, self).put_request(url=url_temp, query=query)
+        return super(Board, self).put_request(url=url_rquest, query=query)
 
     def update_show_sidebarr_member_pref(self, value:str, id: str = None):
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/myPrefs/showSidebarMembers"
-        else:
-            url_temp = self.request_url + f"/{id}/myPrefs/showSidebarMembers"
+        url_rquest = self.select_id(id=id, string=f"/myPrefs/showSidebarMembers")
 
         query = {
             'key': self.app_key,
@@ -664,7 +570,7 @@ class Board(Base):
             'value': value
         }
 
-        return super(Board, self).put_request(url=url_temp, query=query)
+        return super(Board, self).put_request(url=url_rquest, query=query)
 
     def creata_board(self, name, default_labels: bool = True, default_lists: bool = True, desc: str = None, id_organization: str = None,
                      id_boardSource: str = None, keepFromSource: str = None, power_ups: str = None, prefs_permission_level:str = "private",
@@ -691,19 +597,15 @@ class Board(Base):
         :return:
         """
 
-        default_labels = 'true' if default_labels else 'false'
-        default_lists = 'true' if default_lists else 'false'
-        prefs_card_covers = 'true' if prefs_card_covers else 'false'
-        prefs_self_join = 'true' if prefs_self_join else 'false'
 
-        url_temp = self.request_url
+        url_rquest = self.base_url
 
         query = {
             'key': self.app_key,
             'token': self.token,
             'name': name,
-            'defaultLabels': default_labels,
-            'defaultLists': default_lists,
+            'defaultLabels': self.bool_to_string(default_labels),
+            'defaultLists': self.bool_to_string(default_lists),
             'desc': desc,
             'idOrganization': id_organization,
             'idBoardSource': id_boardSource,
@@ -713,14 +615,14 @@ class Board(Base):
             'prefs_voting': prefs_voting,
             'prefs_comments': prefs_comments,
             'prefs_invitations': prefs_invitations,
-            'prefs_selfJoin': prefs_self_join,
-            'prefs_cardCovers': prefs_card_covers,
+            'prefs_selfJoin': self.bool_to_string(prefs_self_join),
+            'prefs_cardCovers': self.bool_to_string(prefs_card_covers),
             'prefs_background': prefs_background,
             'prefs_cardAging': prefs_card_aging
 
         }
 
-        return super(Board, self).post_request(url=url_temp,query=query)
+        return super(Board, self).post_request(url=url_rquest,query=query)
 
     def create_calender_key(self, id: str = None):
         """
@@ -728,17 +630,14 @@ class Board(Base):
         :param id: The id of the board to update
         :return:
         """
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/calendarKey/generate"
-        else:
-            url_temp = self.request_url + f"/{id}/calendarKey/generate"
+        url_rquest = self.select_id(id=id, string=f"/calendarKey/generate")
 
         query = {
             'key': self.app_key,
             'token': self.token
         }
 
-        return super(Board, self).post_request(url=url_temp, query=query)
+        return super(Board, self).post_request(url=url_rquest, query=query)
 
     def create_email_key(self, id: str = None):
         """
@@ -746,17 +645,14 @@ class Board(Base):
         :param id: The id of the board to update
         :return:
         """
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/emailKey/generate"
-        else:
-            url_temp = self.request_url + f"/{id}/emailKey/generate"
+        url_rquest = self.select_id(id=id, string=f"/emailKey/generate")
 
         query = {
             'key': self.app_key,
             'token': self.token
         }
 
-        return super(Board, self).post_request(url=url_temp, query=query)
+        return super(Board, self).post_request(url=url_rquest, query=query)
 
     def create_tag(self, value:str, id: str = None):
         """
@@ -765,10 +661,7 @@ class Board(Base):
         :param id: The id of the board to update
         :return:
         """
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/idTags"
-        else:
-            url_temp = self.request_url + f"/{id}/idTags"
+        url_rquest = self.select_id(id=id, string=f"/idTags")
 
         query = {
             'key': self.app_key,
@@ -776,7 +669,7 @@ class Board(Base):
             'value': value
         }
 
-        return super(Board, self).post_request(url=url_temp, query=query)
+        return super(Board, self).post_request(url=url_rquest, query=query)
 
     def mark_board_as_viewed(self, id: str = None):
         """
@@ -784,17 +677,14 @@ class Board(Base):
         :param id: The id of the board to update
         :return:
         """
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/markedAsViewed"
-        else:
-            url_temp = self.request_url + f"/{id}/markedAsViewed"
+        url_rquest = self.select_id(id=id, string=f"/markedAsViewed")
 
         query = {
             'key': self.app_key,
             'token': self.token
         }
 
-        return super(Board, self).post_request(url=url_temp, query=query)
+        return super(Board, self).post_request(url=url_rquest, query=query)
 
     def enable_power_up(self, power_up:str, id: str = None):
         """
@@ -803,10 +693,7 @@ class Board(Base):
         :param id: The id of the board to update
         :return:
         """
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/powerUps"
-        else:
-            url_temp = self.request_url + f"/{id}/powerUps"
+        url_rquest = self.select_id(id=id, string=f"/powerUps")
 
         query = {
             'key': self.app_key,
@@ -814,7 +701,7 @@ class Board(Base):
             'value': power_up
         }
 
-        return super(Board, self).post_request(url=url_temp, query=query)
+        return super(Board, self).post_request(url=url_rquest, query=query)
 
     def disable_power_up(self, power_up: str, id: str = None):
         """
@@ -823,17 +710,14 @@ class Board(Base):
         :param id: The id of the board to update
         :return:
         """
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/powerUps/{power_up}"
-        else:
-            url_temp = self.request_url + f"/{id}/powerUps/{power_up}"
+        url_rquest = self.select_id(id=id, string=f"/powerUps/{power_up}")
 
         query = {
             'key': self.app_key,
             'token': self.token,
         }
 
-        return super(Board, self).delete_request(url=url_temp, query=query)
+        return super(Board, self).delete_request(url=url_rquest, query=query)
 
     def get_enable_power_ups(self, id: str = None):
         """
@@ -841,17 +725,15 @@ class Board(Base):
         :param id: The id of the board to update
         :return:
         """
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/boardPlugins"
-        else:
-            url_temp = self.request_url + f"/{id}/boardPlugins"
+        url_rquest = self.select_id(id=id, string=f"/boardPlugins")
+
 
         query = {
             'key': self.app_key,
             'token': self.token,
         }
 
-        return super(Board, self).get_request(url=url_temp, query=query)
+        return super(Board, self).get_request(url=url_rquest, query=query)
 
     def enable_a_power_up(self, id_plugin: str, id: str = None):
         """
@@ -860,10 +742,7 @@ class Board(Base):
         :param idPlugin: The ID of the Power-Up to enable
         :return:
         """
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/boardPlugins"
-        else:
-            url_temp = self.request_url + f"/{id}/boardPlugins"
+        url_rquest = self.select_id(id=id, string=f"/boardPlugins")
 
         query = {
             'key': self.app_key,
@@ -871,7 +750,7 @@ class Board(Base):
             'idPlugin':id_plugin
         }
 
-        return super(Board, self).post_request(url=url_temp, query=query)
+        return super(Board, self).post_request(url=url_rquest, query=query)
 
     def disable_a_power_up(self,id_plugin: str, id: str = None):
         """
@@ -879,10 +758,7 @@ class Board(Base):
         :param id: The ID of the board
         :return:
         """
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/boardPlugins/{id_plugin}"
-        else:
-            url_temp = self.request_url + f"/{id}/boardPlugins/{id_plugin}"
+        url_rquest = self.select_id(id=id, string=f"/boardPlugins/{id_plugin}")
 
         query = {
             'key': self.app_key,
@@ -890,7 +766,7 @@ class Board(Base):
             'idPlugin':id_plugin
         }
 
-        return super(Board, self).delete_request(url=url_temp, query=query)
+        return super(Board, self).delete_request(url=url_rquest, query=query)
 
     def get_power_ups(self, id: str = None, filter: str = None):
         """
@@ -899,16 +775,13 @@ class Board(Base):
         :param filter: One of: enabled or available
         :return:
         """
-        if id == None:
-            url_temp = self.request_url + f"/{self.id}/plugins"
-        else:
-            url_temp = self.request_url + f"/{id}/plugins"
+        url_rquest = self.select_id(id=id, string=f"/plugins")
 
         query = {
             'key': self.app_key,
             'token': self.token,
         }
 
-        return super(Board, self).get_request(url=url_temp, query=query)
+        return super(Board, self).get_request(url=url_rquest, query=query)
 
 

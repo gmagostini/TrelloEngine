@@ -1,5 +1,5 @@
 from .base import Base
 
 
-class Organizations(Base):
+class Organization(Base):
     pass

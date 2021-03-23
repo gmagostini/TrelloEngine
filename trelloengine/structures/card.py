@@ -5,9 +5,12 @@ class Card(Base):
 
     def __init__(self, app_key: str, token: str, id=None):
         super(Card, self).__init__(app_key=app_key, token=token, id=id)
-        self.request_url = self.request_url + "/boards"
+        self.request_url = self.request_url + "/cards"
 
-    def create_card(self):
+    def create_card(self,id_list: str, name: str =None, desc: str = None, due: str = None, deu_complete: str =None,
+                    id_members: list(str) = None, id_lbels: list(str) = None, url_source: str = None, file_soure: str = None,
+                    id_card_source: str = None, keep_from_source: str = None, address: str = None, location_name: str = None,
+                    coordinate: str = None):
         pass
 
     def get_card(self):

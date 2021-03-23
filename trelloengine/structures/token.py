@@ -2,10 +2,10 @@ from .base import Base
 import requests
 import json
 
-class Tokens(Base):
+class Token(Base):
 
     def __init__(self, app_key: str, token: str):
-        super(Tokens, self).__init__(app_key=app_key,token=token)
+        super(Token, self).__init__(app_key=app_key, token=token)
         self.request_url = self.request_url + f"/tokens/{self.token}"
 
     def get_member(self):

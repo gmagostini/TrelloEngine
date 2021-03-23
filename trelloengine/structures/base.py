@@ -12,11 +12,24 @@ class Base(object):
         self.app_key = app_key
         self.token = token
         self.id = id
-        self.id = None
-        self.request_url = f"https://api.trello.com/1"
+        self.base_url = f"https://api.trello.com/1"
+
+    def select_id(self, id: str, string: str = None):
+        if id is None and self.id is None:
+            raise ValueError("id is not set correctly")
+        elif id is None:
+            url_temp = self.base_url + f"/{self.id}"
+        else:
+            url_temp = self.base_url + f"/{id}"
+
+        if string is not None:
+            url_temp += string
+
+        return url_temp
 
 
-
+    def bool_to_string(self,boolean:bool):
+        return 'true' if boolean else 'false'
 
     def get_request(self, url, query, headers = {"Accept": "application/json"}):
 
@@ -84,3 +97,6 @@ class Base(object):
             return response.json()
         else:
             return {"response": response, "text": response.text}
+
+
+
