@@ -1,6 +1,7 @@
 import requests
 import json
 
+from .logger import init_logger
 
 class Base(object):
     """
@@ -16,6 +17,8 @@ class Base(object):
 
         self.response =None
 
+
+        self.logger = init_logger(dunder_name=__name__,testing_mode=True)
 
     def select_id(self, id: str, string: str = None) -> str:
         """
@@ -33,7 +36,7 @@ class Base(object):
             url_temp = self.base_url + f"/{id}"
 
         if string is not None:
-            url_temp += string
+            url_temp += '/' + string
 
         return url_temp
 
@@ -66,8 +69,14 @@ class Base(object):
         )
 
         if response.__str__() == "<Response [200]>":
+            self.logger.info(f"[RESPONSE]     : {response}")
+            self.logger.info(f"[URL REQUEST]  : {url}")
+            self.logger.info(f"[RESPONSE.TEXT]: {response.text}")
             return response.json()
         else:
+            self.logger.error(f"[RESPONSE]     : {response}")
+            self.logger.error(f"[URL REQUEST]  : {url}")
+            self.logger.error(f"[RESPONSE.TEXT]: {response.text}")
             return {"response": response, "text": response.text}
 
     def put_request(self, url, query) -> json:
@@ -84,9 +93,14 @@ class Base(object):
         )
 
         if response.__str__() == "<Response [200]>":
-
+            self.logger.info(f"[RESPONSE]     : {response}")
+            self.logger.info(f"[URL REQUEST]  : {url}")
+            self.logger.info(f"[RESPONSE.TEXT]: {response.text}")
             return response.json()
         else:
+            self.logger.error(f"[RESPONSE]     : {response}")
+            self.logger.error(f"[URL REQUEST]  : {url}")
+            self.logger.error(f"[RESPONSE.TEXT]: {response.text}")
             return {"response": response, "text": response.text}
 
 
@@ -97,6 +111,7 @@ class Base(object):
         :param query:
         :return:
         """
+
         response = requests.request(
             "POST",
             url,
@@ -104,9 +119,14 @@ class Base(object):
         )
 
         if response.__str__() == "<Response [200]>":
-
+            self.logger.info(f"[RESPONSE]     : {response}")
+            self.logger.info(f"[URL REQUEST]  : {url}")
+            self.logger.info(f"[RESPONSE.TEXT]: {response.text}")
             return response.json()
         else:
+            self.logger.error(f"[RESPONSE]     : {response}")
+            self.logger.error(f"[URL REQUEST]  : {url}")
+            self.logger.error(f"[RESPONSE.TEXT]: {response.text}")
             return {"response": response, "text": response.text}
 
 
@@ -124,8 +144,14 @@ class Base(object):
         )
 
         if response.__str__() == "<Response [200]>":
+            self.logger.info(f"[RESPONSE]     : {response}")
+            self.logger.info(f"[URL REQUEST]  : {url}")
+            self.logger.info(f"[RESPONSE.TEXT]: {response.text}")
             return response.json()
         else:
+            self.logger.error(f"[RESPONSE]     : {response}")
+            self.logger.error(f"[URL REQUEST]  : {url}")
+            self.logger.error(f"[RESPONSE.TEXT]: {response.text}")
             return {"response": response, "text": response.text}
 
 

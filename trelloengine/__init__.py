@@ -4,6 +4,7 @@ import time
 from trelloengine.trellocore import TrelloCore
 import time
 import json
+from trelloengine.structures.logger import init_logger
 """ tutta la parte de power up va gestita perche non fuozniona (tranne enable a power up)"""
 
 def test_board(test):
@@ -48,25 +49,53 @@ def test_board(test):
     print(f"enable : {board.enable_power_up(power_up='calendar')}")
 
 
-def test_card(test):
+def test_card(test,logger):
     board_id = test.member().get_boards(id=test.token().get_member()['id'])[0]['id']
-    card_id = test.board(id=board_id).get_cards()[0]['id']
-    card = test.card(id=card_id)
+    card = test.card()
     list_id = test.board(id=board_id).get_lists()[0]['id']
-    card_element = card.create_card(id_list=list_id)
-    print(f"create card: {card_element}")
-    print(f"update card: {card.update_card(id= card_element['id'], parameters= {'name': 'cosimo'})}")
-    card_element = card.create_card(id_list=list_id,name="pluto")
+    logger.info("CREATE CARD")
+    card_element = card.create_card(id_list=list_id,name='pluto')
+    logger.info("GET CARD")
+    card = test.card(id=card_element['id'])
+    card.get_card()
+    logger.info("UPDATE CARD")
+    card.update_card(id= card_element['id'], parameters= {'name': 'cosimo'})
+    logger.info("GET FIELD")
+    card.get_field(field='name')
+    logger.info("GET ACTIONS")
+    card.get_actions()
+    logger.info("CREATE ATTACHMENTE")
+    card.create_attachment(url="http://esoteric-test.ddns.net:8081/")
+    logger.info("GET ATTACHMENTS")
+    attachment = card.get_attachments()[0]['id']
+    logger.info("GET AN ATTACHMENT")
+    card.get_attachment(id_attachment=attachment)
+    logger.warning("SLEEPING")
     time.sleep(3)
-    print(f"delete card: {card.delete_card(id=card_element['id'])}")
+    logger.info("DELETE AN ATTACHMENT")
+    card.delete_attachment(id_attachment=attachment)
+    logger.info("GET BOARD")
+    card.get_board()
+
+
+
+
+
+
+    logger.warning("SLEEPING")
+    time.sleep(3)
+    logger.info("DELETE CARD")
+    card.delete_card(id=card_element['id'])
 
 
 def Main():
+    logger = init_logger(dunder_name=__name__,testing_mode=True)
     with open(".env","r") as file:
         key =json.load(file)
     test = TrelloCore(app_key=key["api_key"], token=key["token"])
+
     #test_board(test)
-    test_card(test)
+    test_card(test,logger)
 
 
 

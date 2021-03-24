@@ -5,7 +5,7 @@ class Card(Base):
 
     def __init__(self, app_key: str, token: str, id=None):
         super(Card, self).__init__(app_key=app_key, token=token, id=id)
-        self.request_url = self.base_url + "/cards"
+        self.base_url = self.base_url + "/cards"
 
     def create_card(self, id_list: str, name: str =None, desc: str = None, pos:str= None, due: str = None, deu_complete: bool =False,
                     id_members: list = None, id_labels: list = None, url_source: str = None, file_source: str = None,
@@ -35,7 +35,7 @@ class Card(Base):
             'coordinates': coordinate
         }
 
-        return super(Card, self).post_request(url=self.request_url,query=self.bool_to_string(query=query))
+        return super(Card, self).post_request(url=self.base_url,query=self.bool_to_string(query=query))
 
     def get_card(self, id: str = None, fields: str = 'all', actions: str = None, attachments: (str, bool) = False, attachment_fields: str = "all",
                  members: bool = False, member_filed:str = 'all', member_votet: bool = False, member_voted_field: str = 'all',
@@ -143,104 +143,343 @@ class Card(Base):
         query = {
             'key': self.app_key,
             'token': self.token,
+            'fields': fields,
             'filter': filter
         }
 
         return super(Card, self).get_request(url=url_rquest, query=query)
 
-    def create_attachment(self, id: str =None):
-        pass
+    def create_attachment(self, id: str =None, name: str = None, file: str =None, mine_type: str = None, url: str = None,
+                          set_cover: bool = False, ):
+        url_rquest = self.select_id(id=id, string='attachments')
 
-    def get_attachment(self, id: str =None):
-        pass
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'name': name,
+            'file': file,
+            'mineType':mine_type,
+            'url':url,
+            'setCover': set_cover
+        }
 
-    def delete_attachment(self, id: str =None):
-        pass
+        return super(Card, self).post_request(url=url_rquest, query=query)
 
-    def get_board(self, id: str =None):
-        pass
+    def get_attachment(self,id_attachment: str, id: str =None, fields: list = None):
+        url_rquest = self.select_id(id=id, string=f'attachments/{id_attachment}')
 
-    def get_checkitems(self, id: str =None):
-        pass
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'fields': fields
+        }
 
-    def get_checklists(self, id: str =None):
-        pass
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
-    def create_checklist(self, id: str =None):
-        pass
+    def delete_attachment(self, id_attachment: str, id: str =None):
+        url_rquest = self.select_id(id=id, string=f'attachments/{id_attachment}')
 
-    def get_checkitem(self, id: str =None):
-        pass
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).delete_request(url=url_rquest, query=query)
+
+    def get_board(self, id: str =None, fields: str = 'all'):
+        url_rquest = self.select_id(id=id, string='board')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
+
+    def get_checkitems(self, id: str =None, fields: str = 'all'):
+        url_rquest = self.select_id(id=id, string='checkItemStates')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'fields': fields
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
+
+    def get_checklists(self, id: str =None, check_items: str = 'all', checkitem_fields: str = 'all', filter: str = 'all',
+                       fields: str = 'all'):
+
+        url_rquest = self.select_id(id=id, string='checklists')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'checkItems':check_items,
+            'checkItem_fields': checkitem_fields,
+            'filter': filter,
+            'fields': fields
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
+
+    def create_checklist(self, id: str =None, name: str = None, id_checklist_source: str = None, pos: (str, int) = 'top'):
+        url_rquest = self.select_id(id=id, string='checklists')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
+
+    def get_checkitem(self, id: str =None, fields: str = 'all'):
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def update_checkitem(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def delete_checkitem(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def get_list(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def get_members(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def get_members_who_voted(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def add_member_vote(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def get_plugin_data(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def get_stickers(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def add_sticker(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def update_stiker(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def delete_stiker(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def update_comment(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def delete_comment(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def update_costum_filed(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def get_costum_field(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def add_comment(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def add_label(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def add_member(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def create_label(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def remove_label(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def remove_member(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def remove_member_vote(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def update_checkitem_on_checklist(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
     def delete_checklist(self, id: str =None):
-        pass
+        url_rquest = self.select_id(id=id, string='attachments')
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Card, self).get_request(url=url_rquest, query=query)
 
