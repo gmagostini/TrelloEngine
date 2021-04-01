@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from .base import Base
 
 
@@ -23,7 +24,7 @@ class Board(Base):
         :return: members list
         """
 
-        url_rquest = self.select_id(id=id, string=f"memberships")
+        url_rquest = self.select_id(id=id, string=[f"memberships"])
 
         query = {
             'key': self.app_key,
@@ -92,42 +93,64 @@ class Board(Base):
 
         return super(Board, self).get_request(url=url_rquest,query=self.bool_to_string(query=query))
 
-    def update_board(self, parameters: dict = {}, id=None):
+    def update_board(self, id: str = None, name: str = None, desc:str = None, closed: bool = None, subscribed: str = None,
+                     id_organization: str = None, permission_level: str = None, self_join: bool = None, card_cover: bool = None,
+                     hide_votes: bool = None,invitation: str = None, voting: str = None, comment: str = None, background: str = None,
+                     card_aging: str = None,calender_feed_enable: bool = None, label_green: str = None, label_yellow: str = None,
+                     label_orange: str = None, label_red: str = None, label_purple: str = None, label_blue: str = None):
         """
         Update board \n
-        all arguments that are intended to be changed have passed through kwargs\n
-        **name**: The new name for the board. 1 to 16384 characters long.\n
-        **desc: A new description for the board, 0 to 16384 characters long\n
-        **closed**: Whether the board is closed\n
-        **subscribed**: Whether the acting user is subscribed to the board\n
-        **idOrganization**: The id of the team the board should be moved to\n
-        **prefs/permissionLevel**: permission write read. One of: org, private, public\n
-        **prefs/selfJoin**: Whether team members can join the board themselves\n
-        **prefs/cardCovers**: Whether card covers should be displayed on this board\n
-        **prefs/hideVotes**: Determines whether the Voting Power-Up should hide who voted on cards or not.\n
-        **prefs/invitations**: Who can invite people to this board. One of: admins, members\n
-        **prefs/voting**: Who can vote on this board. One of disabled, members, observers, org, public\n
-        **prefs/comments**: Who can comment on cards on this board. One of: disabled, members, observers, org, public\n
-        **prefs/background**: The id of a custom background or one of: blue, orange, green, red, purple, pink, lime, sky, grey\n
-        **prefs/cardAging**: [no clue] One of: pirate, regular\n
-        **prefs/calendarFeedEnabled**: Determines whether the calendar feed is enabled or not.\n
-        **labelNames/green**: Name for the green label. 1 to 16384 characters long\n
-        **labelNames/yellow**: Name for the green label. 1 to 16384 characters long\n
-        **labelNames/orange**: Name for the green label. 1 to 16384 characters long\n
-        **labelNames/red**: Name for the green label. 1 to 16384 characters long\n
-        **labelNames/purple**: Name for the green label. 1 to 16384 characters long\n
-        **labelNames/blue**: Name for the green label. 1 to 16384 characters long\n
-        **labelNames change the first label of the indicated color on the list\n
+        None parameter will not be change
         :param id: The ID of the board
-        :param kwargs: name desc descData closed idOrganization idEnterprise pinned url shortUrl prefs labelNames
-        :return: None
+        :param name: The new name for the board. 1 to 16384 characters long.\n
+        :param desc:  A new description for the board, 0 to 16384 characters long\n
+        :param closed: Whether the board is closed\n
+        :param subscribed: Whether the acting user is subscribed to the board\n
+        :param id_organization: The id of the team the board should be moved to\n
+        :param permission_level:  permission write read. One of: org, private, public\n
+        :param self_join: Whether team members can join the board themselves\n
+        :param card_cover: Whether card covers should be displayed on this board\n
+        :param hide_votes: Determines whether the Voting Power-Up should hide who voted on cards or not.\n
+        :param invitation: Who can invite people to this board. One of: admins, members\n
+        :param voting: Who can vote on this board. One of disabled, members, observers, org, public\n
+        :param comment: Who can comment on cards on this board. One of: disabled, members, observers, org, public
+        :param background: The id of a custom background or one of: blue, orange, green, red, purple, pink, lime, sky, grey\n
+        :param card_aging: [no clue] One of: pirate, regular\n
+        :param calender_feed_enable: Determines whether the calendar feed is enabled or not.\n
+        :param label_green: Name for the green label. 1 to 16384 characters long\n
+        :param label_yellow: Name for the yellow label. 1 to 16384 characters long\n
+        :param label_orange: Name for the orange label. 1 to 16384 characters long\n
+        :param label_red: Name for the red label. 1 to 16384 characters long\n
+        :param label_purple:  Name for the purple label. 1 to 16384 characters long\n
+        :param label_blue: Name for the blue label. 1 to 16384 characters long\n
+        :return:
         """
         url_rquest = self.select_id(id=id)
 
         query = {
             'key': self.app_key,
             'token': self.token,
-            **parameters
+            'name': name,
+            'desc': desc,
+            'closed': closed,
+            'subscribed': subscribed,
+            'idOrganization': id_organization,
+            'prefs/permissionLevel': permission_level,
+            'prefs/selfJoin': self_join,
+            'prefs/cardCovers': card_cover,
+            'prefs/hideVotes': hide_votes,
+            'prefs/invitations': invitation,
+            'prefs/voting': voting,
+            'prefs/comments': comment,
+            'prefs/background': background,
+            'prefs/cardAging': card_aging,
+            'prefs/calendarFeedEnabled': calender_feed_enable,
+            'labelNames/green': label_green,
+            'labelNames/yellow': label_yellow,
+            'labelNames/orange': label_orange,
+            'labelNames/red': label_red,
+            'labelNames/purple': label_purple,
+            'labelNames/blue': label_blue
         }
 
         return super(Board, self).put_request(url=url_rquest,query=query)
@@ -157,7 +180,7 @@ class Board(Base):
         :return: il filed???
         """
 
-        url_rquest = self.select_id(id=id, string=f"{field}")
+        url_rquest = self.select_id(id=id, string=[f"{field}"])
 
         query = {
             'key': self.app_key,
@@ -175,7 +198,7 @@ class Board(Base):
         :return:
         """
 
-        url_rquest = self.select_id(id=id, string=f"actions")
+        url_rquest = self.select_id(id=id, string=[f"actions"])
 
         query = {
             'key': self.app_key,
@@ -193,7 +216,7 @@ class Board(Base):
         :return: card dict
         """
 
-        url_rquest = self.select_id(id=id, string=f"cards/{id_card}")
+        url_rquest = self.select_id(id=id, string=[f"cards",f"{id_card}"])
 
         query = {
             'key': self.app_key,
@@ -209,7 +232,7 @@ class Board(Base):
         :return: star list
         """
 
-        url_rquest = self.select_id(id=id, string=f"boardStars")
+        url_rquest = self.select_id(id=id, string=[f"boardStars"])
 
         query = {
             'key': self.app_key,
@@ -226,7 +249,7 @@ class Board(Base):
         :return: checklist list
         """
 
-        url_rquest = self.select_id(id=id, string=f"checklists")
+        url_rquest = self.select_id(id=id, string=[f"checklists"])
 
         query = {
             'key': self.app_key,
@@ -246,7 +269,7 @@ class Board(Base):
         :return: checklist dict
         """
 
-        url_rquest = self.select_id(id=id, string=f"checklists")
+        url_rquest = self.select_id(id=id, string=[f"checklists"])
 
         query = {
             'key': self.app_key,
@@ -262,7 +285,7 @@ class Board(Base):
         :param id: The ID of the board
         :return: cards list
         """
-        url_rquest = self.select_id(id=id, string=f"cards")
+        url_rquest = self.select_id(id=id, string=[f"cards"])
 
         query = {
             'key': self.app_key,
@@ -279,7 +302,7 @@ class Board(Base):
         :return: cards list
         """
 
-        url_rquest = self.select_id(id=id, string=f"cards/{filter}")
+        url_rquest = self.select_id(id=id, string=[f"cards",f"{filter}"])
 
         query = {
             'key': self.app_key,
@@ -295,7 +318,7 @@ class Board(Base):
         :return: la lista dei costumFileds
         """
 
-        url_rquest = self.select_id(id=id, string=f"customFields")
+        url_rquest = self.select_id(id=id, string=[f"customFields"])
 
         query = {
             'key': self.app_key,
@@ -312,7 +335,7 @@ class Board(Base):
         :return: lista delle labels
         """
 
-        url_rquest = self.select_id(id=id, string=f"labels")
+        url_rquest = self.select_id(id=id, string=[f"labels"])
 
         query = {
             'key': self.app_key,
@@ -330,7 +353,7 @@ class Board(Base):
         :param id: The ID of the board
         :return: label dict
         """
-        url_rquest = self.select_id(id=id, string=f"labels")
+        url_rquest = self.select_id(id=id, string=[f"labels"])
 
         query = {
             'key': self.app_key,
@@ -349,7 +372,7 @@ class Board(Base):
         :return: lists list
         """
 
-        url_rquest = self.select_id(id=id, string=f"lists")
+        url_rquest = self.select_id(id=id, string=[f"lists"])
 
         query = {
             'key': self.app_key,
@@ -368,7 +391,7 @@ class Board(Base):
         :return: list dict
         """
 
-        url_rquest = self.select_id(id=id, string=f"lists")
+        url_rquest = self.select_id(id=id, string=[f"lists"])
 
         query = {
             'key': self.app_key,
@@ -388,7 +411,7 @@ class Board(Base):
         :return: lists list
         """
 
-        url_rquest = self.select_id(id=id, string=f"lists")
+        url_rquest = self.select_id(id=id, string=[f"lists"])
 
         query = {
             'key': self.app_key,
@@ -406,7 +429,7 @@ class Board(Base):
         :return: la lista dei member
         """
 
-        url_rquest = self.select_id(id=id, string=f"members")
+        url_rquest = self.select_id(id=id, string=[f"members"])
 
         query = {
             'key': self.app_key,
@@ -425,7 +448,7 @@ class Board(Base):
         :return:
         """
 
-        url_rquest = self.select_id(id=id, string=f"members")
+        url_rquest = self.select_id(id=id, string=[f"members"])
 
         query = {
             'key': self.app_key,
@@ -446,7 +469,7 @@ class Board(Base):
         :param allow_billable_guest: Optional param that allows organization admins to add multi-board guests onto a board.
         :return: dict
         """
-        url_rquest = self.select_id(id=id, string=f"members/{id_member}")
+        url_rquest = self.select_id(id=id, string=[f"members",f"{id_member}"])
 
         query = {
             'key': self.app_key,
@@ -465,7 +488,7 @@ class Board(Base):
         :return: dict
         """
 
-        url_rquest = self.select_id(id=id, string=f"members/{id_member}")
+        url_rquest = self.select_id(id=id, string=[f"members",f"{id_member}"])
 
         query = {
             'key': self.app_key,
@@ -483,7 +506,7 @@ class Board(Base):
         :param member_fields:
         :return:
         """
-        url_rquest = self.select_id(id=id, string=f"members/{id_membership}")
+        url_rquest = self.select_id(id=id, string=[f"members",f"{id_membership}"])
 
 
         query = {
@@ -496,7 +519,7 @@ class Board(Base):
         return super(Board, self).put_request(url=url_rquest,query=query)
 
     def update_email_position(self, value:str, id: str = None):
-        url_rquest = self.select_id(id=id, string=f"myPrefs/emailPosition")
+        url_rquest = self.select_id(id=id, string=[f"myPrefs","emailPosition"])
 
         query = {
             'key': self.app_key,
@@ -507,7 +530,7 @@ class Board(Base):
         return super(Board, self).put_request(url=url_rquest, query=query)
 
     def update_id_email_list(self, value:str, id: str = None):
-        url_rquest = self.select_id(id=id, string=f"myPrefs/idEmailList")
+        url_rquest = self.select_id(id=id, string=[f"myPrefs","idEmailList"])
 
 
         query = {
@@ -519,7 +542,7 @@ class Board(Base):
         return super(Board, self).put_request(url=url_rquest, query=query)
 
     def update_show_list_guide_pref(self, value:str, id: str = None):
-        url_rquest = self.select_id(id=id, string=f"myPrefs/showListGuide")
+        url_rquest = self.select_id(id=id, string=[f"myPrefs","showListGuide"])
 
         query = {
             'key': self.app_key,
@@ -530,7 +553,7 @@ class Board(Base):
         return super(Board, self).put_request(url=url_rquest, query=query)
 
     def update_show_sidebar_pref(self, value:str, id: str = None):
-        url_rquest = self.select_id(id=id, string=f"myPrefs/showSidebar")
+        url_rquest = self.select_id(id=id, string=[f"myPrefs","showSidebar"])
 
         query = {
             'key': self.app_key,
@@ -541,7 +564,7 @@ class Board(Base):
         return super(Board, self).put_request(url=url_rquest, query=query)
 
     def update_show_sidebarr_activity_pref(self, value:str, id: str = None):
-        url_rquest = self.select_id(id=id, string=f"myPrefs/showSidebarActivity")
+        url_rquest = self.select_id(id=id, string=[f"myPrefs","showSidebarActivity"])
 
         query = {
             'key': self.app_key,
@@ -552,7 +575,7 @@ class Board(Base):
         return super(Board, self).put_request(url=url_rquest, query=query)
 
     def update_show_sidebarr_board_actions_pref(self, value:str, id: str = None):
-        url_rquest = self.select_id(id=id, string=f"myPrefs/showSidebarBoardActions")
+        url_rquest = self.select_id(id=id, string=[f"myPrefs","showSidebarBoardActions"])
 
         query = {
             'key': self.app_key,
@@ -563,7 +586,7 @@ class Board(Base):
         return super(Board, self).put_request(url=url_rquest, query=query)
 
     def update_show_sidebarr_member_pref(self, value:str, id: str = None):
-        url_rquest = self.select_id(id=id, string=f"myPrefs/showSidebarMembers")
+        url_rquest = self.select_id(id=id, string=[f"myPrefs","showSidebarMembers"])
 
         query = {
             'key': self.app_key,
@@ -631,7 +654,7 @@ class Board(Base):
         :param id: The id of the board to update
         :return:
         """
-        url_rquest = self.select_id(id=id, string=f"calendarKey/generate")
+        url_rquest = self.select_id(id=id, string=[f"calendarKey","generate"])
 
         query = {
             'key': self.app_key,
@@ -646,7 +669,7 @@ class Board(Base):
         :param id: The id of the board to update
         :return:
         """
-        url_rquest = self.select_id(id=id, string=f"emailKey/generate")
+        url_rquest = self.select_id(id=id, string=[f"emailKey","generate"])
 
         query = {
             'key': self.app_key,
@@ -662,7 +685,7 @@ class Board(Base):
         :param id: The id of the board to update
         :return:
         """
-        url_rquest = self.select_id(id=id, string=f"idTags")
+        url_rquest = self.select_id(id=id, string=[f"idTags"])
 
         query = {
             'key': self.app_key,
@@ -674,11 +697,11 @@ class Board(Base):
 
     def mark_board_as_viewed(self, id: str = None):
         """
-
+        DOSEN'T WORK !!!
         :param id: The id of the board to update
         :return:
         """
-        url_rquest = self.select_id(id=id, string=f"markedAsViewed")
+        url_rquest = self.select_id(id=id, string=[f"markedAsViewed"])
 
         query = {
             'key': self.app_key,
@@ -694,7 +717,7 @@ class Board(Base):
         :param id: The id of the board to update
         :return:
         """
-        url_rquest = self.select_id(id=id, string=f"powerUps")
+        url_rquest = self.select_id(id=id, string=[f"powerUps"])
 
         query = {
             'key': self.app_key,
@@ -711,7 +734,7 @@ class Board(Base):
         :param id: The id of the board to update
         :return:
         """
-        url_rquest = self.select_id(id=id, string=f"powerUps/{power_up}")
+        url_rquest = self.select_id(id=id, string=[f"powerUps",f"{power_up}"])
 
         query = {
             'key': self.app_key,
@@ -726,7 +749,7 @@ class Board(Base):
         :param id: The id of the board to update
         :return:
         """
-        url_rquest = self.select_id(id=id, string=f"boardPlugins")
+        url_rquest = self.select_id(id=id, string=[f"boardPlugins"])
 
 
         query = {
@@ -743,7 +766,7 @@ class Board(Base):
         :param idPlugin: The ID of the Power-Up to enable
         :return:
         """
-        url_rquest = self.select_id(id=id, string=f"boardPlugins")
+        url_rquest = self.select_id(id=id, string=[f"boardPlugins"])
 
         query = {
             'key': self.app_key,
@@ -759,7 +782,7 @@ class Board(Base):
         :param id: The ID of the board
         :return:
         """
-        url_rquest = self.select_id(id=id, string=f"boardPlugins/{id_plugin}")
+        url_rquest = self.select_id(id=id, string=[f"boardPlugins",f"{id_plugin}"])
 
         query = {
             'key': self.app_key,
@@ -776,7 +799,7 @@ class Board(Base):
         :param filter: One of: enabled or available
         :return:
         """
-        url_rquest = self.select_id(id=id, string=f"plugins")
+        url_rquest = self.select_id(id=id, string=[f"plugins"])
 
         query = {
             'key': self.app_key,

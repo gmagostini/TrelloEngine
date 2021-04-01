@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from .base import Base
 
 
@@ -6,7 +7,7 @@ class List(Base):
     def __init__(self, app_key: str, token: str,id=None):
         super(List, self).__init__(app_key=app_key,token=token)
         self.id = id
-        self.request_url = self.request_url + "/lists"
+        self.request_url = self.base_url + "/lists"
 
     def get_cards(self, id=None):
 

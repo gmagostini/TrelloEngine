@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import requests
 import json
 
@@ -18,9 +19,9 @@ class Base(object):
         self.response =None
 
 
-        self.logger = init_logger(dunder_name=__name__,testing_mode=True)
+        self.logger = init_logger(dunder_name=__name__, level="DEBUG")
 
-    def select_id(self, id: str, string: str = None) -> str:
+    def select_id(self, id: str, string: list = None) -> str:
         """
         Switch for id selection. If no id is passed as a parameter use the global one. If no id exists raise a ValueError.
         Adds the last part of the url.
@@ -36,7 +37,8 @@ class Base(object):
             url_temp = self.base_url + f"/{id}"
 
         if string is not None:
-            url_temp += '/' + string
+            for i in string:
+                url_temp += '/' + i
 
         return url_temp
 
@@ -72,6 +74,7 @@ class Base(object):
             self.logger.info(f"[RESPONSE]     : {response}")
             self.logger.info(f"[URL REQUEST]  : {url}")
             self.logger.info(f"[RESPONSE.TEXT]: {response.text}")
+            #self.logger.info(f"[RESPONSE.TEXT]: {json.dumps(json.loads(response.text), sort_keys=True, indent=4, separators=(',', ': '))}")
             return response.json()
         else:
             self.logger.error(f"[RESPONSE]     : {response}")

@@ -1,7 +1,8 @@
+#!/usr/bin/env python3
 import logging
 import colorlog
 
-def init_logger(dunder_name, testing_mode) -> logging.Logger:
+def init_logger(dunder_name, level = "INFO") -> logging.Logger:
     log_format = (
         '%(asctime)s - '
         '%(name)s - '
@@ -18,8 +19,13 @@ def init_logger(dunder_name, testing_mode) -> logging.Logger:
     colorlog.basicConfig(format=colorlog_format)
     logger = logging.getLogger(dunder_name)
 
-    if testing_mode:
+
+
+
+    if level == "DEBUG":
         logger.setLevel(logging.DEBUG)
+    elif level == "ERROR":
+        logger.setLevel(logging.ERROR)
     else:
         logger.setLevel(logging.INFO)
 
@@ -45,3 +51,5 @@ def init_logger(dunder_name, testing_mode) -> logging.Logger:
     logger.addHandler(fh)
 
     return logger
+
+

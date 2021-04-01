@@ -1,5 +1,97 @@
+#!/usr/bin/env python3
 from .base import Base
 
 
 class CustumField(Base):
-    pass
+
+    def __init__(self, app_key: str, token: str, id=None):
+        super(CustumField, self).__init__(app_key=app_key, token=token, id=id)
+        self.base_url = self.base_url + "/customFields"
+
+
+    def create_custom_field(self,id_model: str, model_type: str, name: str, type: str, pos: (str, float),
+                            options: str = None, display_card_front: bool = True ):
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'idModel': id_model,
+            'modelType': model_type,
+            'name': name,
+            'type': type,
+            'options': options,
+            'pos': pos,
+            'display_cardFront': display_card_front
+        }
+
+        return super(CustumField, self).get_request(url=self.base_url, query=query)
+
+    def get_custom_fields(self, id: str = None):
+        url_rquest = self.select_id(id=id, string=['checkItems'])
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(CustumField, self).get_request(url=url_rquest, query=query)
+
+    def update_custom_fields(self, id: str = None):
+        url_rquest = self.select_id(id=id, string=['checkItems'])
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(CustumField, self).get_request(url=url_rquest, query=query)
+
+    def delete_custom_fields(self, id: str = None):
+        url_rquest = self.select_id(id=id, string=['checkItems'])
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(CustumField, self).get_request(url=url_rquest, query=query)
+
+    def get_options(self, id: str = None):
+        url_rquest = self.select_id(id=id, string=['checkItems'])
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(CustumField, self).get_request(url=url_rquest, query=query)
+
+    def add_option(self, id: str = None):
+        url_rquest = self.select_id(id=id, string=['checkItems'])
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(CustumField, self).get_request(url=url_rquest, query=query)
+
+    def get_option(self, id: str = None):
+        url_rquest = self.select_id(id=id, string=['checkItems'])
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(CustumField, self).get_request(url=url_rquest, query=query)
+
+    def get_delete(self, id: str = None):
+        url_rquest = self.select_id(id=id, string=['checkItems'])
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(CustumField, self).get_request(url=url_rquest, query=query)

@@ -1,17 +1,18 @@
-from .structures.board import Board
-from .structures.card import Card
-from .structures.checklist import Checklist
-from .structures.customField import CustumField
-from .structures.emoji import Emoji
-from .structures.enterprise import Enterprise
-from .structures.label import Label
-from .structures.list import List
-from .structures.member import Member
-from .structures.notification import Notification
-from .structures.organization import Organization
-from .structures.search import Search
-from .structures.token import Token
-from .structures.webhook import Webhook
+#!/usr/bin/env python3
+from structures.board import Board
+from structures.card import Card
+from structures.checklist import Checklist
+from structures.customField import CustumField
+from structures.emoji import Emoji
+from structures.enterprise import Enterprise
+from structures.label import Label
+from structures.list import List
+from structures.member import Member
+from structures.notification import Notification
+from structures.organization import Organization
+from structures.search import Search
+from structures.token import Token
+from structures.webhook import Webhook
 
 
 

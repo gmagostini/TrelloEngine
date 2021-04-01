@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  trelloengine:
+    image: trelloengine
+    build:
+      context: .
+      dockerfile: ./Dockerfile
