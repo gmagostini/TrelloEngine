@@ -85,33 +85,65 @@ def test_card(test,logger):
     board_id = test.member().get_boards(id=test.token().get_member()['id'])[0]['id']
     card = test.card()
     list_id = test.board(id=board_id).get_lists()[0]['id']
-    logger.info("CREATE CARD")
+    #logger.info("CREATE CARD")
     card_element = card.create_card(id_list=list_id,name='pluto',desc="Non era il più alto, ma nemmeno il più basso")
     logger.info("GET CARD")
     card = test.card(id=card_element['id'])
-    card.get_card()
-    logger.info("UPDATE CARD")
-    card.update_card(id= card_element['id'], name="Cosimo il basso")
-    logger.info("GET FIELD")
-    card.get_field(field='name')
-    logger.info("GET ACTIONS")
-    card.get_actions()
-    logger.info("CREATE ATTACHMENTE")
-    card.create_attachment(url="http://esoteric-test.ddns.net:8081/")
-    logger.info("GET ATTACHMENTS")
-    attachment = card.get_attachments()[0]['id']
-    logger.info("GET AN ATTACHMENT")
-    card.get_attachment(id_attachment=attachment)
-    logger.info("DELETE AN ATTACHMENT")
-    card.delete_attachment(id_attachment=attachment)
-    logger.info("GET BOARD")
-    card.get_board()
-    logger.info("update checkitem")
-
-
-
-
-
+    #card.get_card()
+    #logger.info("UPDATE CARD")
+    #card.update_card(id= card_element['id'], name="Cosimo il basso")
+    #logger.info("GET FIELD")
+    #card.get_field(field='name')
+    #logger.info("GET ACTIONS")
+    #card.get_actions()
+    #logger.info("CREATE ATTACHMENTE")
+    #card.create_attachment(url="http://esoteric-test.ddns.net:8081/")
+    #logger.info("GET ATTACHMENTS")
+    #attachment = card.get_attachments()[0]['id']
+    #logger.info("GET AN ATTACHMENT")
+    #card.get_attachment(id_attachment=attachment)
+    #logger.info("DELETE AN ATTACHMENT")
+    #card.delete_attachment(id_attachment=attachment)
+    #logger.info("GET BOARD")
+    #card.get_board()
+    #logger.info("CREATE CHECKLIST")
+    #card.create_checklist(name="Carlo Roviera")['id']
+    #card_id = test.list(id=list_id).get_cards()[0]['id']
+    #card =  test.card(id=card_id)
+    #logger.info("GET CHECKLIST")
+    #checklist_id = card.get_checklists()[0]['id']
+    #checkitem_id = test.checklist(id=checklist_id).get_checkitems()[0]['id']
+    #logger.info("UPDATE CHECKITEM")
+    #card.update_checkitem(id_check_item=checkitem_id, name="peperoni")
+    #logger.info("DELETE CHECKITEM")
+    #card.delete_checkitem(id_check_item=checkitem_id)
+    #logger.info("GET COMPLETED CHECKITEMS")
+    #checkitem_id = card.get_completed_checkitems()
+    #logger.info("GET LIST")
+    #card.get_list()
+    #logger.info("GET MEMBER")
+    #card.get_members()
+    #logger.info("GET MEMBER WHO VOTED")
+    #card.get_members_who_voted()
+    #logger.info("GET PLUGINDATA")
+    #card.get_plugin_data()
+    #logger.info("GET SRIKERS")
+    #card.get_stickers()
+    # AAD TIEKER DOSNE'T WORK ON STANDARD ACCAUNT
+    #logger.info("ADD SRIKERS")
+    #card.add_sticker(image= 'taco-cool', top=-60,left=-60,zindex=2)
+    #logger.info("ADD COMMENT")
+    #commen_id = card.add_comment(text="ciaone da Pescara Scalo")['id']
+    #logger.info("UPDATE COMMENT")
+    #card.update_comment(id_action= commen_id, text="ciaone da Vicenza")
+    #logger.info("DELETE COMMENT")
+    #card.delete_comment(id_action= commen_id)
+    logger.info("CREATE LABEL")
+    lable_id = card.create_label(color="red",name="Blue")
+    logger.info("GET LABEL")
+    test.label(id=lable_id).get_label()
+    logger.info("ADD LABEL")
+    card.add_label(id_label=lable_id)
 
 
     logger.info("DELETE CARD")
@@ -130,7 +162,7 @@ def Main():
     test = TrelloCore(app_key=key["api_key"], token=key["token"])
 
     # test_board(test,logger)
-    #test_card(test,logger)
+    test_card(test,logger)
     #emoji(test,logger)
 
 

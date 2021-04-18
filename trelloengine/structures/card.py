@@ -27,8 +27,6 @@ class Card(Base):
             'idLabels': id_labels,
             'urlSource': url_source,
             'fileSource': file_source,
-            'urlSource': url_source,
-            'fileSource': file_source,
             'idCardSource': id_card_source,
             'keepFromSource': keep_from_source,
             'andress': address,
@@ -245,19 +243,23 @@ class Card(Base):
 
         return super(Card, self).get_request(url=url_rquest, query=query)
 
-    def update_checkitem(self, id_check_item: str, parameter: dict, id: str =None):
+    def update_checkitem(self, id_check_item: str, id: str =None, name: str = None, state: str = None,
+                        id_checklist:str = None, pos: (str, float) = None):
         url_rquest = self.select_id(id=id, string=['checkItem', id_check_item])
 
         query = {
             'key': self.app_key,
             'token': self.token,
-            **parameter
+            'name': name,
+            'state': state,
+            'idChecklist': id_checklist,
+            'pos': pos
         }
 
         return super(Card, self).put_request(url=url_rquest, query=query)
 
     def delete_checkitem(self,id_check_item: str, id: str =None):
-        url_rquest = self.select_id(id=id, string=['attachments', id_check_item])
+        url_rquest = self.select_id(id=id, string=['checkItem', id_check_item])
 
         query = {
             'key': self.app_key,
@@ -332,15 +334,20 @@ class Card(Base):
 
         return super(Card, self).get_request(url=url_rquest, query=query)
 
-    def add_sticker(self, id_sticker: str, id: str =None):
-        url_rquest = self.select_id(id=id, string=['stickers',id_sticker])
+    def add_sticker(self, image: str, top: float, left: float, zindex: int, id: str =None, rotate: float = 0):
+        url_rquest = self.select_id(id=id, string=['stickers'])
 
         query = {
             'key': self.app_key,
             'token': self.token,
+            'image': image,
+            'top': top,
+            'left': left,
+            'zIndex': zindex,
+            'rotate': rotate
         }
 
-        return super(Card, self).get_request(url=url_rquest, query=query)
+        return super(Card, self).post_request(url=url_rquest, query=query)
 
     def update_stiker(self, id_sticker: str, top: float, left: float, zindex: int, id: str =None, rotate: float = 0):
         url_rquest = self.select_id(id=id, string=['stickers'])
@@ -350,7 +357,7 @@ class Card(Base):
             'token': self.token,
             'top': top,
             'left': left,
-            'zindex': zindex,
+            'zIndex': zindex,
             'rotate': rotate
         }
 
@@ -378,7 +385,7 @@ class Card(Base):
         return super(Card, self).put_request(url=url_rquest, query=query)
 
     def delete_comment(self, id_action: str, id: str =None):
-        url_rquest = self.select_id(id=id, string=['attachments', id_action, 'comments'])
+        url_rquest = self.select_id(id=id, string=['actions', id_action, 'comments'])
 
         query = {
             'key': self.app_key,
@@ -388,6 +395,7 @@ class Card(Base):
         return super(Card, self).delete_request(url=url_rquest, query=query)
 
     def update_costum_filed(self,id_custom_field: str, id: str =None):
+
         url_rquest = self.select_id(id=id, string=['customField', id_custom_field, 'item'])
 
         query = {
@@ -419,12 +427,12 @@ class Card(Base):
         return super(Card, self).post_request(url=url_rquest, query=query)
 
     def add_label(self, id: str =None, id_label: str = None):
-        url_rquest = self.select_id(id=id, string=['attachments', 'idLabels'])
+        url_rquest = self.select_id(id=id, string=['idLabels'])
 
         query = {
             'key': self.app_key,
             'token': self.token,
-            'value': id_label
+            #'value': id_label
         }
 
         return super(Card, self).post_request(url=url_rquest, query=query)

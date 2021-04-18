@@ -11,7 +11,16 @@ class CustumField(Base):
 
     def create_custom_field(self,id_model: str, model_type: str, name: str, type: str, pos: (str, float),
                             options: str = None, display_card_front: bool = True ):
-
+        """
+        Create a new Custom Field on a board.
+        :param id_model: i don't know what it is
+        :param model_type: The type of model that the Custom Field is being defined on. This should always be board.
+        :param name: The name of the Custom Field
+        :param type: The type of Custom Field to create.
+        :param pos: Normally pos is the position, but I do not understand what it refers to in this case.
+        :param options: If the type is checkbox
+        :param display_card_front: Whether this Custom Field should be shown on the front of Cards
+        """
         query = {
             'key': self.app_key,
             'token': self.token,
