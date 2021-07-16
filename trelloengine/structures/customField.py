@@ -4,8 +4,8 @@ from .base import Base
 
 class CustumField(Base):
 
-    def __init__(self, app_key: str, token: str, id=None):
-        super(CustumField, self).__init__(app_key=app_key, token=token, id=id)
+    def __init__(self, app_key: str, token: str, id=None, use_log = False):
+        super(CustumField, self).__init__(app_key=app_key, token=token,id=id, use_log=use_log)
         self.base_url = self.base_url + "/customFields"
 
 

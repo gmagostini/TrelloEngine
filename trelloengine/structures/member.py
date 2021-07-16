@@ -4,10 +4,10 @@ from .base import Base
 
 class Member(Base):
 
-    def __init__(self, app_key: str, token: str,id=None):
-        super(Member, self).__init__(app_key=app_key,token=token)
+    def __init__(self, app_key: str, token: str,id=None, use_log = False):
+        super(Member, self).__init__(app_key=app_key,token=token, id=id, use_log=use_log)
         self.id = id
-        self.request_url = self.base_url + f"/members"
+        self.base_url = self.base_url + f"/members"
 
 
     def get_list(self, id: str = None):
@@ -20,7 +20,41 @@ class Member(Base):
         }
 
         return super(Member, self).get_request(url=request_url, query=query)
+    def get_member(self, id: str = None, actions: str = None, boards: str = None, boardBackgrounds: str = None,
+                    boardsInvited: str = 'all', boardsInvited_fields: str = 'all', boardStars: bool = False,
+                    cards: str = None, customBoardBackgrounds: str = None, customEmoji: str = None, customStickers: str = None,
+                    fields: str = None, notifications: str = None, organizations: str = None, organization_fields: str = None, 
+                    organization_paid_account: bool = False, organizations_invited: str = None, organizationsInvited_fields: str = None,
+                    paid_account: bool = False, savedSearches: bool = False, tokens: str = None):
 
+        request_url = self.select_id(id=id, string=[])
+
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+            'actions': actions,
+            'boards': boards,
+            'boardBackgrounds': boardBackgrounds,
+            'boardsInvited': boardsInvited,
+            'boardsInvited_fields': boardsInvited_fields,
+            'boardStars': boardStars,
+            'cards': cards,
+            'customBoardBackgrounds':  customBoardBackgrounds,
+            'customEmoji': customEmoji,
+            'customStickers': customStickers,
+            'fields': fields,
+            'notifications': notifications,
+            'organizations': organizations,
+            'organization_fields': organization_fields,
+            'organization_paid_account': organization_paid_account,
+            'organizationsInvited': organizations_invited,
+            'organizationsInvited_fields': organizationsInvited_fields,
+            'paid_account': paid_account,
+            'savedSearches': savedSearches,
+            'tokens': tokens,
+        }
+
+        return super(Member, self).get_request(url=request_url, query=query)
     
     def update_member(self, id: str = None, full_name: str = None, initials: str = None, username: str = None, bio: str = None,
                      avatar_source: str = None, color_blind: bool = None, locale: str = None, minutes_between_summaries: int = None):
@@ -41,7 +75,7 @@ class Member(Base):
         }
 
         return super(Member, self).put_request(url=request_url, query=query)
-
+        
 
     def get_filed(self, field: str, id: str = None):
     
@@ -324,14 +358,19 @@ class Member(Base):
         
         return super(Member,self).post_request(url=request_url, query=query)
 
-    def get_boards (self, id=None):
+    def get_boards (self, id=None, filter: str = 'all', fields: str = 'all', lists: str = None, organization: bool = False, organization_fields: str = 'all'):
 
         request_url = self.select_id(id=id, string=['boards'])
 
 
         query = {
             'key': self.app_key,
-            'token': self.token
+            'token': self.token,
+            'filter': filter,
+            'fields': fields,
+            'lists': lists,
+            'organization': organization,
+            'organization_fields': organization_fields
         }
 
         return super(Member, self).get_request(url=request_url, query=query)

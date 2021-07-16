@@ -4,7 +4,7 @@ from .base import Base
 
 class Board(Base):
 
-    def __init__(self, app_key: str, token: str,id=None):
+    def __init__(self, app_key: str, token: str,id=None, use_log = False):
         super(Board, self).__init__(app_key=app_key,token=token, id=id)
         self.base_url = self.base_url + "/boards"
 
@@ -39,9 +39,11 @@ class Board(Base):
 
     
 
-    def get_board(self, id: str = None, actions: str = 'all', board_stars: str = None,cards: str = None, card_plugin_data: bool = False, checklists: str = None, custom_fields: bool = False,
+    def get_board(self, id: str = None, actions: str = 'all', board_stars: str = None,cards: str = None, 
+                  card_plugin_data: bool = False, checklists: str = None, custom_fields: bool = False,
                   fields: str = 'all', labels: str = None, lists: str = 'open', members: str = None,
-                  memberships: str = None, plugin_data: bool = False, organization: bool = False, organization_plugin_data:bool = False, my_prefs:bool = False, tags: bool = False):
+                  memberships: str = None, plugin_data: bool = False, organization: bool = False, 
+                  organization_plugin_data:bool = False, my_prefs:bool = False, tags: bool = False):
         """
         Request a single board.\n
         * Read more about actions as nested resources https://developer.atlassian.com/cloud/trello/guides/rest-api/nested-resources/\n
@@ -365,7 +367,7 @@ class Board(Base):
         return super(Board, self).post_request(url=url_rquest,query=query)
 
 
-    def get_lists(self, id: str = None):
+    def get_lists(self, id: str = None, cards: str = None, card_fields: str = 'all', filter: str = 'all', fields:str = 'all'):
         """
         Get the Lists on a Board
         :param id: The ID of the board
@@ -376,7 +378,11 @@ class Board(Base):
 
         query = {
             'key': self.app_key,
-            'token': self.token
+            'token': self.token,
+            'cards': cards,
+            'card_fields': card_fields,
+            'filter': filter,
+            'fields': fields,
         }
 
         return super(Board, self).get_request(url=url_rquest,query=query)

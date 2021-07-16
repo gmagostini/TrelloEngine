@@ -4,10 +4,10 @@ from .base import Base
 
 class List(Base):
 
-    def __init__(self, app_key: str, token: str,id=None):
-        super(List, self).__init__(app_key=app_key,token=token)
+    def __init__(self, app_key: str, token: str,id=None, use_log = False):
+        super(List, self).__init__(app_key=app_key,token=token, id=id, use_log=use_log)
         self.id = id
-        self.request_url = self.base_url + "/lists"
+        self.base_url = self.base_url + "/lists"
 
 
     def get_list(self, id: str = None):

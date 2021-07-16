@@ -4,8 +4,8 @@ from .base import Base
 
 class Notification(Base):
     
-    def __init__(self, app_key: str, token: str, id=None):
-        super(Notification, self).__init__(app_key=app_key, token=token, id=id)
+    def __init__(self, app_key: str, token: str, id=None, use_log = False):
+        super(Notification, self).__init__(app_key=app_key, token=token,id=id, use_log=use_log)
         self.base_url = self.base_url + "/notifications"
 
     
@@ -57,7 +57,7 @@ class Notification(Base):
 
         return super(Notification, self).get_request(url=url_rquest, query=query)
 
-    def mark_all_as_read(self, id: str = None, read: bool = False, ids: (list(str)) = None):
+    def mark_all_as_read(self, id: str = None, read: bool = False, ids: list = None):
         url_rquest = self.select_id(id=id, string=['all', 'read'])
 
         query = {

@@ -24,10 +24,19 @@ def init_logger(dunder_name, level = "INFO") -> logging.Logger:
 
     if level == "DEBUG":
         logger.setLevel(logging.DEBUG)
+        logger.propagate = True
     elif level == "ERROR":
         logger.setLevel(logging.ERROR)
-    else:
+        logger.propagate = True
+    elif level == "INFO":
         logger.setLevel(logging.INFO)
+        logger.propagate = True
+    elif level == "CRITICAL":
+        logger.setLevel(logging.CRITICAL)
+        logger.propagate = False
+    else:
+        logger.setLevel(logging.CRITICAL)
+        logger.propagate = False
 
     # Output full log
     fh = logging.FileHandler('app.log')

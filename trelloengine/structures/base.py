@@ -9,7 +9,7 @@ class Base(object):
     i valori boolean vanno coverti in string, la maiuscola di True e False danno problemi e ritornano valore non valido
     """
 
-    def __init__(self, app_key: str, token: str, id:str = None):
+    def __init__(self, app_key: str, token: str, id:str = None, use_log = False):
         super(Base, self).__init__()
         self.app_key = app_key
         self.token = token
@@ -17,9 +17,10 @@ class Base(object):
         self.base_url = f"https://api.trello.com/1"
 
         self.response =None
-
-
+        self.use_log = use_log
         self.logger = init_logger(dunder_name=__name__, level="DEBUG")
+
+
 
     def select_id(self, id: str, string: list = None) -> str:
         """
@@ -31,6 +32,8 @@ class Base(object):
         """
         if id is None and self.id is None:
             raise ValueError("id is not set correctly")
+        elif id == "not_used":
+            pass
         elif id is None:
             url_temp = self.base_url + f"/{self.id}"
         else:
@@ -55,6 +58,21 @@ class Base(object):
 
         return query
 
+    def do_logg(self,url, response):
+        if self.use_log:
+            print(f": {self.use_log}")
+            if response.__str__() == "<Response [200]>":
+                self.logger.info(f"[RESPONSE]     : {response}")
+                self.logger.info(f"[URL REQUEST]  : {url}")
+                #self.logger.info(f"[RESPONSE.TEXT]: {response.text}")
+                self.logger.info(f"[RESPONSE.TEXT]: {json.dumps(json.loads(response.text), sort_keys=True, indent=4, separators=(',', ': '))}")
+            else:
+                self.logger.error(f"[RESPONSE]     : {response}")
+                self.logger.error(f"[URL REQUEST]  : {url}")
+                self.logger.error(f"[RESPONSE.TEXT]: {response.text}")
+                return {"response": response, "text": response.text}
+
+
     def get_request(self, url, query, headers = {"Accept": "application/json"}) -> json:
         """
         basic function for the get request
@@ -70,17 +88,12 @@ class Base(object):
             params=self.bool_to_string(query)
         )
 
+        self.do_logg(url, response)
+
         if response.__str__() == "<Response [200]>":
-            self.logger.info(f"[RESPONSE]     : {response}")
-            self.logger.info(f"[URL REQUEST]  : {url}")
-            self.logger.info(f"[RESPONSE.TEXT]: {response.text}")
-            #self.logger.info(f"[RESPONSE.TEXT]: {json.dumps(json.loads(response.text), sort_keys=True, indent=4, separators=(',', ': '))}")
             return response.json()
-        else:
-            self.logger.error(f"[RESPONSE]     : {response}")
-            self.logger.error(f"[URL REQUEST]  : {url}")
-            self.logger.error(f"[RESPONSE.TEXT]: {response.text}")
-            return {"response": response, "text": response.text}
+
+       
 
     def put_request(self, url, query) -> json:
         """
@@ -95,16 +108,10 @@ class Base(object):
             params=self.bool_to_string(query)
         )
 
+        self.do_logg(url, response)
+
         if response.__str__() == "<Response [200]>":
-            self.logger.info(f"[RESPONSE]     : {response}")
-            self.logger.info(f"[URL REQUEST]  : {url}")
-            self.logger.info(f"[RESPONSE.TEXT]: {response.text}")
             return response.json()
-        else:
-            self.logger.error(f"[RESPONSE]     : {response}")
-            self.logger.error(f"[URL REQUEST]  : {url}")
-            self.logger.error(f"[RESPONSE.TEXT]: {response.text}")
-            return {"response": response, "text": response.text}
 
 
     def post_request(self, url, query) -> json:
@@ -121,16 +128,10 @@ class Base(object):
             params=self.bool_to_string(query)
         )
 
+        self.do_logg(url, response)
+
         if response.__str__() == "<Response [200]>":
-            self.logger.info(f"[RESPONSE]     : {response}")
-            self.logger.info(f"[URL REQUEST]  : {url}")
-            self.logger.info(f"[RESPONSE.TEXT]: {response.text}")
             return response.json()
-        else:
-            self.logger.error(f"[RESPONSE]     : {response}")
-            self.logger.error(f"[URL REQUEST]  : {url}")
-            self.logger.error(f"[RESPONSE.TEXT]: {response.text}")
-            return {"response": response, "text": response.text}
 
 
     def delete_request(self, url, query) -> json:
@@ -146,16 +147,10 @@ class Base(object):
             params=self.bool_to_string(query)
         )
 
+        self.do_logg(url, response)
+
         if response.__str__() == "<Response [200]>":
-            self.logger.info(f"[RESPONSE]     : {response}")
-            self.logger.info(f"[URL REQUEST]  : {url}")
-            self.logger.info(f"[RESPONSE.TEXT]: {response.text}")
             return response.json()
-        else:
-            self.logger.error(f"[RESPONSE]     : {response}")
-            self.logger.error(f"[URL REQUEST]  : {url}")
-            self.logger.error(f"[RESPONSE.TEXT]: {response.text}")
-            return {"response": response, "text": response.text}
 
 
 

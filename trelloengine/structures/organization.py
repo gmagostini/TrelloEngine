@@ -4,8 +4,8 @@ from .base import Base
 
 class Organization(Base):
     
-    def __init__(self, app_key: str, token: str, id=None):
-        super(Organization, self).__init__(app_key=app_key, token=token, id=id)
+    def __init__(self, app_key: str, token: str, id=None, use_log = False):
+        super(Organization, self).__init__(app_key=app_key, token=token,id=id, use_log=use_log)
         self.base_url = self.base_url + "/organizations"
     
     def create_organization(self,display_name: str, id: str = None, desc: str =  None, name: str = None, website: str = None):
@@ -235,5 +235,42 @@ class Organization(Base):
 
     def remove_asosciete_google_apps_domain_fro_a_workspace(self, id: str = None):
         url_rquest = self.select_id(id=id, string=['prefs', 'associatedDomain'])
-
         
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Organization, self).delete_request(url=url_rquest, query=query)
+    
+    def delte_email_domain_restriction(self, id: str = None):
+        url_rquest = self.select_id(id=id, string=['prefs', 'orgInviteRestrict'])
+        
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Organization, self).delete_request(url=url_rquest, query=query)
+
+
+    def delte_tag(self,id_tag: str, id: str = None):
+        url_rquest = self.select_id(id=id, string=['tags', id_tag])
+        
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Organization, self).delete_request(url=url_rquest, query=query)
+    
+    def get_new_billage_guest(self,idBoard: str, id: str = None):
+        url_rquest = self.select_id(id=id, string=['newBillableGuests', idBoard])
+        
+        query = {
+            'key': self.app_key,
+            'token': self.token,
+        }
+
+        return super(Organization, self).delete_request(url=url_rquest, query=query)
+    

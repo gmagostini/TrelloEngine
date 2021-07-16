@@ -155,16 +155,65 @@ def emoji(test,logger):
     #print(test.emoji().get_avalible_emoji())
     test.emoji().get_avalible_emoji()
 
+def webhook(test,logger):
+    
+    member_id = test.token().get_member()['id']
+    board_id = test.member().get_boards(id=member_id)[0]['id']
+    logger.info("CREATE WEBHOOK")
+    webhook_dati = test.webhook().create_webhook(callback_URL="http://esoteric-test.ddns.net:8080/", id_model=board_id, description = "tentativo")
+    
+
+def search(test,logger):
+    
+    member_id = test.token().get_member()['id']
+    board_id = test.member().get_boards(id=member_id)[0]['id']
+    logger.info("CREATE WEBHOOK")
+    test.search().serach_trello(model_types="lists",)
+
+
 def Main():
-    logger = init_logger(dunder_name=__name__, level="DEBUG")
+    """    logger = init_logger(dunder_name=__name__, level="DEBUG")
     with open(os.path.join("trelloengine",".env"),"r") as file:
         key =json.load(file)
-    test = TrelloCore(app_key=key["api_key"], token=key["token"])
+    test = TrelloCore(app_key=key["api_key"], token=key["token"])"""
 
     # test_board(test,logger)
-    test_card(test,logger)
+    #test_card(test,logger)
     #emoji(test,logger)
+    #test.token().get_token()
 
+    #webhook(test,logger)
+    #search(test=test,logger=logger)
+
+    """ member_id = test.token().get_member()['id']
+    board_id = test.member().get_boards(id=member_id)[0]['id']
+
+    board = test.board(id=board_id)
+    liste = board.get_lists(fields="id,name", filter='open')
+
+    id_list = [name['id'] for name in liste if "MANAGMEENT" == name['name'] ]
+    if id_list :
+        print(id_list)
+        print(len(id_list[0]))
+    else:
+        id_list = board.create_list(name="MANAGMEENT")['id']
+        print(id_list)"""
+        
+
+
+
+    trellocore = None
+    with open(os.path.join(os.path.abspath(''),"trelloengine","ENV",".env"),"r") as file:
+        key =json.load(file)
+        trellocore = TrelloCore(app_key=key["api_key"], token=key["admin_token"] )
+
+        member_id = trellocore.token().get_member()['id']
+        board_id = trellocore.member().get_boards(id=member_id)[0]['id']
+        board = trellocore.board(id=board_id)
+        liste = board.get_lists(fields="id,name", filter='open')
+
+        id_list = [name['id'] for name in liste if "MANAGMEENT" == name['name'] ]
+        print(id_list)
 
 
 

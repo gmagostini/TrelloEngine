@@ -4,8 +4,8 @@ from .base import Base
 
 class Checklist(Base):
 
-    def __init__(self, app_key: str, token: str, id=None):
-        super(Checklist, self).__init__(app_key=app_key, token=token, id=id)
+    def __init__(self, app_key: str, token: str, id=None, use_log = False):
+        super(Checklist, self).__init__(app_key=app_key, token=token,id=id, use_log=use_log)
         self.base_url = self.base_url + "/checklists"
 
 
